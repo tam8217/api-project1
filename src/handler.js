@@ -33,10 +33,11 @@ const respondJSON = (request, response, status, object) => {
   response.end();
 };
 
-const respondJSONMeta = (request, response, status, object) => {
+/* const respondJSONMeta = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
   response.end();
 };
+*/
 
 const playlists = {};
 
@@ -71,10 +72,9 @@ const notFound = (request, response) => {
   respondJSON(request, response, 404, responseJSON);
 };
 
-const addPlayList = (request, response, incomingData) =>{
-
-   // Create an object hold message
-   const tempObj = {
+const addPlayList = (request, response, incomingData) => {
+  // Create an object hold message
+  const tempObj = {
     message: 'Artist, Song Name, and Playlist Name are both required',
   };
 
@@ -85,40 +85,39 @@ const addPlayList = (request, response, incomingData) =>{
   }
 
   // Status code for creating an item
-  let statusCode = 201;
+  const statusCode = 201;
   let songs = {};
   // If spot already exists, set it to update
   if (playlists[incomingData.playlistName]) {
     songs = playlists[incomingData.playlistName].songs;
   } else {
-    playlists[incomingData.playlistName] = {songs, length:0, name: incomingData.playlistName};
+    playlists[incomingData.playlistName] = { songs, length: 0, name: incomingData.playlistName };
   }
 
-  let currentSongNum = playlists[incomingData.playlistName].length;
+  const currentSongNum = playlists[incomingData.playlistName].length;
   // Assign values
- const songJSON = {
-   song: incomingData.song,
-   artist: incomingData.artist,
-   orderInList: currentSongNum+1
- }
+  const songJSON = {
+    song: incomingData.song,
+    artist: incomingData.artist,
+    orderInList: currentSongNum + 1,
+  };
 
- songs[currentSongNum] = songJSON;
+  songs[currentSongNum] = songJSON;
 
- playlists[incomingData.playlistName].songs = songs;
- playlists[incomingData.playlistName].length = currentSongNum+1;
-
+  playlists[incomingData.playlistName].songs = songs;
+  playlists[incomingData.playlistName].length = currentSongNum + 1;
 
 
   // Send back message with response if the user is created
-  //if (statusCode === 201) {
-    //tempObj.message = 'Playlist created!';
+  // if (statusCode === 201) {
+  // tempObj.message = 'Playlist created!';
 
 
   return respondJSON(request, response, statusCode, playlists[incomingData.playlistName]);
-  //}
+  // }
 
   // Sending back meta data if user is updated
-  //return respondJSONMeta(request, response, statusCode);
+  // return respondJSONMeta(request, response, statusCode);
 };
 module.exports = {
   getIndex,
@@ -127,5 +126,5 @@ module.exports = {
   badRequest,
   notFound,
   getCSS,
-  addPlayList
+  addPlayList,
 };

@@ -10,11 +10,9 @@ const handleGetReq = (request, response, parsedURL) => {
   // Directing to specific URLs
   if (parsedURL.pathname === '/style.css') {
     handler.getCSS(request, response);
-  } else if(parsedURL.pathname === '/bundle.js')
-  {
+  } else if (parsedURL.pathname === '/bundle.js') {
     handler.getBundle(request, response);
-  } 
-  else if (parsedURL.pathname === '/') {
+  } else if (parsedURL.pathname === '/') {
     handler.getIndex(request, response);
   } else {
     handler.notFound(request, response);
@@ -24,13 +22,12 @@ const handleGetReq = (request, response, parsedURL) => {
 
 const handleHeadReq = (request, response, parsedURL) => {
   // Getting meta data from GetUsers
-  
+
   if (parsedURL.pathname === '/getUsers') {
     handler.getUsersHead(request, response);
   } else { // Bad Page Request meta data
     handler.notFoundHead(request, response);
   }
-  
 };
 
 const handlePostReq = (request, response, parsedURL) => {
