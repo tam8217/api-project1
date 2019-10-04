@@ -2,34 +2,6 @@ const handleResponse = (xhr, parseResp) => {
 
   const content = document.querySelector('#displayArea');
 
-  switch(xhr.status)
-  {
-    case 200: 
-      content.innerHTML = `<b>Success!</b>`;
-      break;
-
-    case 201:
-      content.innerHTML = `<b>Created!</b>`;
-      break;
-
-    case 204:
-      content.innerHTML = `<b>Updated!</b>`;
-      break;
-    case 400:
-      content.innerHTML = `<b>Bad Request</b>`;
-      break;
-      
-    case 404:
-      content.innerHTML = `<b>Resource Not Found!</b>`;
-      break;
-
-    default:
-      content.innerHTML = `<b>Status Code Not Implemented by Client!</b>`;
-      break;
-  }
-
-
-
   //Parsing JSON if necessary
   //Not parsing if it's only an update coming through
   if(parseResp)
@@ -46,16 +18,24 @@ const handleResponse = (xhr, parseResp) => {
 
     else
     {
-      let list = document.querySelector(`#${incJSON.name}`);
-      console.log(list);
-      if(list != null)
-      {
+      //let list = document.querySelector(`.${incJSON.name}`);
+      let list = document.getElementsByClassName(`${incJSON.name}`);
 
+      console.log(list);
+      if(list.length == 1)
+      {
+          let currentList = list[0];
+          
+          for(let i = 0; i < incJSON.length; i++)
+          {
+            
+          }
       }
       else
       {
         let newList = document.createElement("div");
         newList.id = incJSON.name;
+        newList.className = incJSON.name;
         
         const title = document.createElement("h1");
         title.innerHTML = `<h1>Playlist Name: ${incJSON.name}</h1>`;
@@ -65,7 +45,8 @@ const handleResponse = (xhr, parseResp) => {
         {
 
           let info = document.createElement("p");
-          info.innerHTML = `<p>${incJSON.songs[i].orderInList}. ${incJSON.songs[i].song} -${incJSON.songs[i].artist}`;
+          info.innerHTML = `<p>${incJSON.songs[i].orderInList}. ${incJSON.songs[i].song} - ${incJSON.songs[i].artist}`;
+          info.id = incJSON.songs[i].orderInList;
           newList.appendChild(info);
         }
         content.appendChild(newList);
