@@ -13,7 +13,7 @@
     "nodemon": "nodemon --watch ./src ./src/server.js --watch ./hosted ./hosted/style.css",
     "start": "node ./src/server.js",
     "pretest": "eslint ./src --fix",
-    "test": "echo \"Tests complete\" && exit 1"
+    "test": "echo \"Tests complete\""
   },
   "repository": {
     "type": "git",
