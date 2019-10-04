@@ -2,48 +2,30 @@
 <html lang="en">
 <head>
   <title>Our simple HTTP server</title>
-  <style>
-    html, body {
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-    }
-    #top {
-        text-align: center;
-        margin: 0 auto;
-    }
-    
-    #top h1 {
-      font-size: 2em;
-    }
-    
-    #content {
-      margin-top: 100px;
-      font-size: 2em;
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="/style.css">
   <!-- script to get our new JS bundle from the server -->
   <script src="bundle.js"> </script>
 </head>
 <body>
-  <section id="top">
-    <h3>Status Code Tests</h3>
-    <p>
-      Go to <b>/success</b> to test a <b>200 Success.</b> 
-      <button id="success">Success</button>
-    </p>
-    <p>
-      Go to <b>/badRequest</b> to test a <b>400 Bad Request.</b> 
-      <button id="badRequest">Bad Request</button>
-    </p>
-    <p>
-      Go to <b>any other URL</b> to test a <b>404 Not Found.</b> 
-      <button id="notFound">Not Found</button>
-    </p>
+  <section id="searchArea">
+    <marquee behavior="scroll" direction="right" scrollamount="3">
+      <h1 class="rainbow-text">Graphic design is my passion</h1>
+    </marquee>
+
+    <form id="playlistInput" action="/addPlaylist" method="POST">
+      <label for="playlist">Playlist Name: </label>
+      <input id="playlistField" type="text" name="playlist" />
+      <label for="artist">Artist Name: </label>
+      <input id="artistField" type="text" name="artist" />
+      <label for="song">Song Name: </label>
+      <input id="songField" type="text" name="age" />
+      <input type="submit" value="Add Song To Playlist" />
+    </form>
   </section>
-  <section id="content">
+
+  <section id="displayArea">
+    
+
   </section>
 </body>
 </html>

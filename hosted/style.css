@@ -1,0 +1,28 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-image: linear-gradient(red, white);
+}
+
+#searchArea{
+    text-align: center;
+    border: 2px solid black;
+    background: rgba(80, 80 , 80, .3);
+    width: 40%; 
+    margin: 0 auto;
+    height: 20%;
+}
+
+.rainbow-text {
+    background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);  
+    -webkit-background-clip: text;
+    color: transparent;
+    transform:rotate(-180deg);
+  }
+#content {
+  margin-top: 100px;
+  font-size: 2em;
+  text-align: center;
+}

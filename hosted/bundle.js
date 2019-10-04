@@ -1,55 +1,111 @@
 "use strict";
 
-var handleResponse = function handleResponse(xhr) {
-  var content = document.querySelector("#content");
+var handleResponse = function handleResponse(xhr, parseResp) {
 
-  var obj = JSON.parse(xhr.response);
-
-  console.dir(obj);
+  var content = document.querySelector('#displayArea');
 
   switch (xhr.status) {
     case 200:
-      content.innerHTML = "<b>Success</b>";
+      content.innerHTML = "<b>Success!</b>";
+      break;
+
+    case 201:
+      content.innerHTML = "<b>Created!</b>";
+      break;
+
+    case 204:
+      content.innerHTML = "<b>Updated!</b>";
       break;
     case 400:
       content.innerHTML = "<b>Bad Request</b>";
       break;
-    default:
-      content.innerHTML = "Error code not implemented by client.";
+
+    case 404:
+      content.innerHTML = "<b>Resource Not Found!</b>";
       break;
+
+    default:
+      content.innerHTML = "<b>Status Code Not Implemented by Client!</b>";
+      break;
+  }
+
+  //Parsing JSON if necessary
+  //Not parsing if it's only an update coming through
+  if (parseResp) {
+    //Parse the JSON and write it out
+    var incJSON = JSON.parse(xhr.response);
+    console.log(incJSON);
+
+    //If JSON has a message, write that out
+    if (incJSON.message) {
+      content.innerHTML += "<p>Message: " + incJSON.message + "</p>";
+    } else {
+      var list = document.querySelector("#" + incJSON.name);
+      console.log(list);
+      if (list != null) {} else {
+        var newList = document.createElement("div");
+        newList.id = incJSON.name;
+
+        var title = document.createElement("h1");
+        title.innerHTML = "<h1>Playlist Name: " + incJSON.name + "</h1>";
+        newList.appendChild(title);
+
+        for (var i = 0; i < incJSON.length; i++) {
+
+          var info = document.createElement("p");
+          info.innerHTML = "<p>" + incJSON.songs[i].orderInList + ". " + incJSON.songs[i].song + " -" + incJSON.songs[i].artist;
+          newList.appendChild(info);
+        }
+        content.appendChild(newList);
+      }
+    }
   }
 };
 
-var sendAjax = function sendAjax(url) {
+var addToPlaylist = function addToPlaylist(e, playlistForm) {
+
+  //Getting the URL to send to and the POST request type
+  var action = playlistForm.getAttribute('action');
+  var method = playlistForm.getAttribute('method');
+
+  //Actual user data inputted
+  var playlistName = playlistForm.querySelector('#playlistField');
+  var artist = playlistForm.querySelector('#artistField');
+  var song = playlistForm.querySelector('#songField');
+
+  //Create request
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', url);
-  xhr.setRequestHeader("Accept", 'application/json');
 
+  //Setting up the request
+  xhr.open(method, action);
+
+  //Setting headers for sending out
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader('Accept', 'application/json');
+
+  //Setting what happens when it's done
   xhr.onload = function () {
-    return handleResponse(xhr);
+    return handleResponse(xhr, true);
   };
 
-  xhr.send();
+  //Sending the parameters
+  var formData = "playlistName=" + playlistName.value + "&artist=" + artist.value + "&song=" + song.value;
+
+  xhr.send(formData);
+
+  e.preventDefault();
+
+  return false;
 };
-
 var init = function init() {
-  var successButton = document.querySelector("#success");
-  var badRequestButton = document.querySelector("#badRequest");
-  var notFoundButton = document.querySelector("#notFound");
 
-  var success = function success() {
-    return sendAjax('/success');
-  };
-  var badRequest = function badRequest() {
-    return sendAjax('/badRequest');
-  };
-  var notFound = function notFound() {
-    return sendAjax('/notFoundURL');
+  var playlistForm = document.querySelector("#playlistInput");
+
+  var addPlaylist = function addPlaylist(e) {
+    return addToPlaylist(e, playlistForm);
   };
 
-  successButton.addEventListener('click', success);
-  badRequestButton.addEventListener('click', badRequest);
-  notFoundButton.addEventListener('click', notFound);
+  playlistForm.addEventListener('submit', addPlaylist);
 };
 
 window.onload = init;
