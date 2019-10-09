@@ -9,20 +9,19 @@ var handleResponse = function handleResponse(xhr, parseResp) {
   if (parseResp) {
     //Parse the JSON and write it out
     var incJSON = JSON.parse(xhr.response);
-    console.log(incJSON);
-
-    //If JSON has a message, write that out
-    if (incJSON.message) {
-      content.innerHTML += "<p>Message: " + incJSON.message + "</p>";
-    } else {
+    //console.log(incJSON);
+    {
       //let list = document.querySelector(`.${incJSON.name}`);
       var list = document.getElementsByClassName("" + incJSON.name);
 
-      console.log(list);
+      //console.log(list);
       if (list.length == 1) {
         var currentList = list[0];
-
-        for (var i = 0; i < incJSON.length; i++) {}
+        var currentSpot = incJSON.length - 1;
+        var info = document.createElement("p");
+        info.innerHTML = "<p>" + incJSON.songs[currentSpot].orderInList + ". " + incJSON.songs[currentSpot].song + " - " + incJSON.songs[currentSpot].artist;
+        info.className = incJSON.songs[currentSpot].orderInList;
+        currentList.appendChild(info);
       } else {
         var newList = document.createElement("div");
         newList.id = incJSON.name;
@@ -32,12 +31,12 @@ var handleResponse = function handleResponse(xhr, parseResp) {
         title.innerHTML = "<h1>Playlist Name: " + incJSON.name + "</h1>";
         newList.appendChild(title);
 
-        for (var _i = 0; _i < incJSON.length; _i++) {
+        for (var i = 0; i < incJSON.length; i++) {
 
-          var info = document.createElement("p");
-          info.innerHTML = "<p>" + incJSON.songs[_i].orderInList + ". " + incJSON.songs[_i].song + " - " + incJSON.songs[_i].artist;
-          info.id = incJSON.songs[_i].orderInList;
-          newList.appendChild(info);
+          var _info = document.createElement("p");
+          _info.innerHTML = "<p>" + incJSON.songs[i].orderInList + ". " + incJSON.songs[i].song + " - " + incJSON.songs[i].artist;
+          _info.className = incJSON.songs[i].orderInList;
+          newList.appendChild(_info);
         }
         content.appendChild(newList);
       }

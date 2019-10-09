@@ -8,28 +8,21 @@ const handleResponse = (xhr, parseResp) => {
   {
     //Parse the JSON and write it out
     const incJSON = JSON.parse(xhr.response);
-    console.log(incJSON);
-
-    //If JSON has a message, write that out
-    if(incJSON.message)
-    {
-      content.innerHTML += `<p>Message: ${incJSON.message}</p>`;
-    }
-
-    else
+    //console.log(incJSON);
     {
       //let list = document.querySelector(`.${incJSON.name}`);
       let list = document.getElementsByClassName(`${incJSON.name}`);
 
-      console.log(list);
+      //console.log(list);
       if(list.length == 1)
       {
           let currentList = list[0];
-          
-          for(let i = 0; i < incJSON.length; i++)
-          {
-            
-          }
+          let currentSpot = incJSON.length-1;
+          let info = document.createElement("p");
+          info.innerHTML = `<p>${incJSON.songs[currentSpot].orderInList}. ${incJSON.songs[currentSpot].song} - ${incJSON.songs[currentSpot].artist}`;
+          info.className = incJSON.songs[currentSpot].orderInList;
+          currentList.appendChild(info);
+
       }
       else
       {
@@ -46,7 +39,7 @@ const handleResponse = (xhr, parseResp) => {
 
           let info = document.createElement("p");
           info.innerHTML = `<p>${incJSON.songs[i].orderInList}. ${incJSON.songs[i].song} - ${incJSON.songs[i].artist}`;
-          info.id = incJSON.songs[i].orderInList;
+          info.className = incJSON.songs[i].orderInList;
           newList.appendChild(info);
         }
         content.appendChild(newList);
