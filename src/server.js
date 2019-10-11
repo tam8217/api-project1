@@ -14,7 +14,8 @@ const handleGetReq = (request, response, parsedURL) => {
     handler.getBundle(request, response);
   } else if (parsedURL.pathname === '/') {
     handler.getIndex(request, response);
-  } else {
+  } 
+  else {
     handler.notFound(request, response);
   }
 };
@@ -58,6 +59,35 @@ const handlePostReq = (request, response, parsedURL) => {
 
       handler.addPlayList(request, response, userParams);
     });
+  }
+  else if (parsedURL.pathname === '/searchSong')
+  {
+      // Creating response to be manipulated
+      const tempResponse = response;
+
+      // Holder for parameters
+      const songdata = [];
+
+      // Error handling
+      request.on('error', (err) => {
+        console.log(err);
+        tempResponse.statusCode = 400;
+        tempResponse.end();
+      });
+
+      // Adding to the data
+      request.on('data', (chunk) => {
+        songdata.push(chunk);
+      });
+
+      // Once data is finished, send it out
+      request.on('end', () => {
+        const songString = Buffer.concat(songdata).toString();
+
+        const songParams = query.parse(songString);
+
+        handler.searchSong(request, response, songParams);
+      });
   }
 };
 

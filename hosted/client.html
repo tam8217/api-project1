@@ -4,6 +4,10 @@
   <title>Our simple HTTP server</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
   <!-- script to get our new JS bundle from the server -->
+  <script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
   <script src="bundle.js"> </script>
 </head>
 <body>
@@ -20,7 +24,22 @@
       <label for="song">Song Name: </label>
       <input id="songField" type="text" name="age" />
       <input type="submit" value="Add Song To Playlist" />
-    </form>
+    </form> 
+    <!--<form id="playlistInput" action="/searchSong" method="POST">
+      <label for="playlist">Playlist Name: </label>
+      <input id="playlistField" type="text" name="playlist" />
+      <label for="artist">Artist Name: </label>
+      <input id="artistField" type="text" name="artist" />
+      <label for="song">Song Name: </label>
+      <input id="songField" type="text" name="age" />
+      <input type="submit" value="Search For Song" />
+    -->
+    <div id="messageDisplay">
+      
+    </div>
+    <div id="resultsArea">
+
+    </div>
   </section>
 
   <section id="displayArea">

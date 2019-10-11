@@ -1,4 +1,7 @@
 const fs = require('fs'); // pull in the file system module
+var unirest = require("unirest");
+
+
 
 const index = fs.readFileSync(`${__dirname}/../hosted/client.html`);
 // added script to pull in our js bundle. This script is generated
@@ -85,11 +88,12 @@ const addPlayList = (request, response, incomingData) => {
   }
 
   // Status code for creating an item
-  const statusCode = 201;
+  let statusCode = 201;
   let songs = {};
   // If spot already exists, set it to update
   if (playlists[incomingData.playlistName]) {
     songs = playlists[incomingData.playlistName].songs;
+    statusCode = 204;
   } else {
     playlists[incomingData.playlistName] = { songs, length: 0, name: incomingData.playlistName };
   }
@@ -111,13 +115,49 @@ const addPlayList = (request, response, incomingData) => {
   // Send back message with response if the user is created
   // if (statusCode === 201) {
   // tempObj.message = 'Playlist created!';
-
+  
+  
 
   return respondJSON(request, response, statusCode, playlists[incomingData.playlistName]);
   // }
 
   // Sending back meta data if user is updated
   // return respondJSONMeta(request, response, statusCode);
+};
+
+const searchSong = (request, response, incomingData) =>{
+  // Create an object hold message
+  const tempObj = {
+    message: 'At least an Artist or Song Name is requireed',
+  };
+  
+  // Checking parameters of the incoming incomingData
+  if (!incomingData.artist && !incomingData.song ) {
+    tempObj.id = 'missingParams';
+    return respondJSON(request, response, 400, tempObj);
+  }
+  var req = unirest("GET", "https://deezerdevs-deezer.p.rapidapi.com/search");
+  let data;
+  let total;
+  req.query({
+    "q": `${incomingData.artist} ${incomingData.song}`
+  });
+
+  req.headers({
+    "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
+    "x-rapidapi-key": "4763759493mshfd683f2901aacdcp1f9dd7jsn712304f496d0",
+    "content-type": "application/json"
+  });
+
+  req.end(function (res) {
+    if (res.error) throw new Error(res.error);
+    console.log(res.body.data);
+    data = res.body.data;
+    total = res.body.total;
+  });
+  let songsJSON = {data, total};
+  console.log(songsJSON);
+  return respondJSON(request, response, 200, songsJSON);
 };
 module.exports = {
   getIndex,
@@ -127,4 +167,5 @@ module.exports = {
   notFound,
   getCSS,
   addPlayList,
+  searchSong
 };
