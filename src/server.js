@@ -15,6 +15,12 @@ const handleGetReq = (request, response, parsedURL) => {
   } else if (parsedURL.pathname === '/') {
     handler.getIndex(request, response);
   } 
+  else if (parsedURL.pathname === '/searchSong')
+  {
+    const params = query.parse(parsedURL.query);
+    console.log(params);
+    handler.searchSong(request, response, params);
+  }
   else {
     handler.notFound(request, response);
   }
@@ -93,7 +99,7 @@ const handlePostReq = (request, response, parsedURL) => {
 
 const onRequest = (request, response) => {
   const parsedURL = url.parse(request.url);
-
+  console.log(parsedURL.pathname);
   // Directing request to where it needs to go
   if (request.method === 'POST') {
     handlePostReq(request, response, parsedURL);

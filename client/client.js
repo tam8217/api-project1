@@ -62,7 +62,7 @@ const handleResponse = (xhr, type) => {
           newList.className = incJSON.name;
           //newList.style = "display:inline";
 
-          newList.style = "display:none";
+          //newList.style = "display:none";
           //newList.style = "opacity:0";
           
           const title = document.createElement("h1");
@@ -78,12 +78,12 @@ const handleResponse = (xhr, type) => {
             newList.appendChild(info);
           }
           
-          //content.appendChild(newList);
-          $(content).append(newList);
+          content.appendChild(newList);
+          /*$(content).append(newList);
           $(`.${incJSON.name}`).fadeIn("slow", function(){
             //$(`.${incJSON.name}`).css("display", "inline");
           });
-          
+          */
         }
       }
     }
@@ -135,8 +135,7 @@ const addToPlaylist = (e, playlistForm) =>{
 const searchSongs = (e, playlistForm) =>{
 
   //Getting the URL to send to and the POST request type
-  const action = playlistForm.getAttribute('action');
-  const method = playlistForm.getAttribute('method');
+  
 
   //Actual user data inputted
   const artist = playlistForm.querySelector('#artistField');
@@ -144,9 +143,10 @@ const searchSongs = (e, playlistForm) =>{
 
   //Create request
   const xhr = new XMLHttpRequest();
-
+  const url = `/searchSong?artist=${artist.value}&song=${song.value}`
+  console.log(url);
   //Setting up the request
-  xhr.open(method, action);
+  xhr.open('GET', url);
 
   //Setting headers for sending out
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -156,10 +156,10 @@ const searchSongs = (e, playlistForm) =>{
   xhr.onload = () => handleResponse(xhr,"search");
 
   //Sending the parameters
-  const formData = `artist=${artist.value}&song=${song.value}`;
+  //const formData = `artist=${artist.value}&song=${song.value}`;
 
-  xhr.send(formData);
-
+  //xhr.send(formData);
+  xhr.send();
   e.preventDefault();
 
   return false;
@@ -168,8 +168,8 @@ const init = () => {
 
   const playlistForm = document.querySelector("#playlistInput");
 
-  //const addPlaylist = (e) => searchSongs(e, playlistForm);
-  const addPlaylist = (e) => addToPlaylist(e, playlistForm);
+  const addPlaylist = (e) => searchSongs(e, playlistForm);
+  //const addPlaylist = (e) => addToPlaylist(e, playlistForm);
 
   playlistForm.addEventListener('submit', addPlaylist);
 };

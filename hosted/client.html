@@ -16,7 +16,7 @@
       <h1 class="rainbow-text">Graphic design is my passion</h1>
     </marquee>
 
-    <form id="playlistInput" action="/addPlaylist" method="POST">
+    <!-- <form id="playlistInput" action="/addPlaylist" method="POST">
       <label for="playlist">Playlist Name: </label>
       <input id="playlistField" type="text" name="playlist" />
       <label for="artist">Artist Name: </label>
@@ -24,8 +24,8 @@
       <label for="song">Song Name: </label>
       <input id="songField" type="text" name="age" />
       <input type="submit" value="Add Song To Playlist" />
-    </form> 
-    <!--<form id="playlistInput" action="/searchSong" method="POST">
+    </form> -->
+    <form id="playlistInput" action="/searchSong" method="GET">
       <label for="playlist">Playlist Name: </label>
       <input id="playlistField" type="text" name="playlist" />
       <label for="artist">Artist Name: </label>
@@ -33,7 +33,8 @@
       <label for="song">Song Name: </label>
       <input id="songField" type="text" name="age" />
       <input type="submit" value="Search For Song" />
-    -->
+    </form> 
+  
     <div id="messageDisplay">
       
     </div>

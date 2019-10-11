@@ -58,7 +58,7 @@ var handleResponse = function handleResponse(xhr, type) {
           newList.className = incJSON.name;
           //newList.style = "display:inline";
 
-          newList.style = "display:none";
+          //newList.style = "display:none";
           //newList.style = "opacity:0";
 
           var title = document.createElement("h1");
@@ -73,11 +73,12 @@ var handleResponse = function handleResponse(xhr, type) {
             newList.appendChild(_info);
           }
 
-          //content.appendChild(newList);
-          $(content).append(newList);
-          $("." + incJSON.name).fadeIn("slow", function () {
+          content.appendChild(newList);
+          /*$(content).append(newList);
+          $(`.${incJSON.name}`).fadeIn("slow", function(){
             //$(`.${incJSON.name}`).css("display", "inline");
           });
+          */
         }
       }
     } else if (type == "search") {
@@ -128,8 +129,7 @@ var addToPlaylist = function addToPlaylist(e, playlistForm) {
 var searchSongs = function searchSongs(e, playlistForm) {
 
   //Getting the URL to send to and the POST request type
-  var action = playlistForm.getAttribute('action');
-  var method = playlistForm.getAttribute('method');
+
 
   //Actual user data inputted
   var artist = playlistForm.querySelector('#artistField');
@@ -137,9 +137,10 @@ var searchSongs = function searchSongs(e, playlistForm) {
 
   //Create request
   var xhr = new XMLHttpRequest();
-
+  var url = "/searchSong?artist=" + artist.value + "&song=" + song.value;
+  console.log(url);
   //Setting up the request
-  xhr.open(method, action);
+  xhr.open('GET', url);
 
   //Setting headers for sending out
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -151,10 +152,10 @@ var searchSongs = function searchSongs(e, playlistForm) {
   };
 
   //Sending the parameters
-  var formData = "artist=" + artist.value + "&song=" + song.value;
+  //const formData = `artist=${artist.value}&song=${song.value}`;
 
-  xhr.send(formData);
-
+  //xhr.send(formData);
+  xhr.send();
   e.preventDefault();
 
   return false;
@@ -163,10 +164,10 @@ var init = function init() {
 
   var playlistForm = document.querySelector("#playlistInput");
 
-  //const addPlaylist = (e) => searchSongs(e, playlistForm);
   var addPlaylist = function addPlaylist(e) {
-    return addToPlaylist(e, playlistForm);
+    return searchSongs(e, playlistForm);
   };
+  //const addPlaylist = (e) => addToPlaylist(e, playlistForm);
 
   playlistForm.addEventListener('submit', addPlaylist);
 };

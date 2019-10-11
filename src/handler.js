@@ -80,7 +80,6 @@ const addPlayList = (request, response, incomingData) => {
   const tempObj = {
     message: 'Artist, Song Name, and Playlist Name are both required',
   };
-
   // Checking parameters of the incoming incomingData
   if (!incomingData.artist || !incomingData.song || !incomingData.playlistName) {
     tempObj.id = 'missingParams';
@@ -111,18 +110,8 @@ const addPlayList = (request, response, incomingData) => {
   playlists[incomingData.playlistName].songs = songs;
   playlists[incomingData.playlistName].length = currentSongNum + 1;
 
+ return respondJSON(request, response, statusCode, playlists[incomingData.playlistName]);
 
-  // Send back message with response if the user is created
-  // if (statusCode === 201) {
-  // tempObj.message = 'Playlist created!';
-  
-  
-
-  return respondJSON(request, response, statusCode, playlists[incomingData.playlistName]);
-  // }
-
-  // Sending back meta data if user is updated
-  // return respondJSONMeta(request, response, statusCode);
 };
 
 const searchSong = (request, response, incomingData) =>{
@@ -130,7 +119,7 @@ const searchSong = (request, response, incomingData) =>{
   const tempObj = {
     message: 'At least an Artist or Song Name is requireed',
   };
-  
+  console.log(incomingData);
   // Checking parameters of the incoming incomingData
   if (!incomingData.artist && !incomingData.song ) {
     tempObj.id = 'missingParams';
@@ -139,6 +128,7 @@ const searchSong = (request, response, incomingData) =>{
   var req = unirest("GET", "https://deezerdevs-deezer.p.rapidapi.com/search");
   let data;
   let total;
+  let songsJSON = {};
   req.query({
     "q": `${incomingData.artist} ${incomingData.song}`
   });
@@ -151,13 +141,13 @@ const searchSong = (request, response, incomingData) =>{
 
   req.end(function (res) {
     if (res.error) throw new Error(res.error);
-    console.log(res.body.data);
-    data = res.body.data;
-    total = res.body.total;
+    console.log(res.body);
+    songsJSON = res.body;
+    console.log(songsJSON);
+    return respondJSON(request, response, 200, songsJSON);
   });
-  let songsJSON = {data, total};
-  console.log(songsJSON);
-  return respondJSON(request, response, 200, songsJSON);
+  
+  
 };
 module.exports = {
   getIndex,
