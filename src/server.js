@@ -14,16 +14,11 @@ const handleGetReq = (request, response, parsedURL) => {
     handler.getBundle(request, response);
   } else if (parsedURL.pathname === '/') {
     handler.getIndex(request, response);
-  } 
-  else if (parsedURL.pathname === '/searchSong')
-  {
+  } else if (parsedURL.pathname === '/searchSong') {
     handler.searchSong(request, response, query.parse(parsedURL.query));
-  }
-  else if(parsedURL.pathname === '/loadPlaylists')
-  {
+  } else if (parsedURL.pathname === '/loadPlaylists') {
     handler.loadPlaylists(request, response);
-  }
-  else {
+  } else {
     handler.notFound(request, response);
   }
 };
@@ -71,7 +66,7 @@ const handlePostReq = (request, response, parsedURL) => {
 
 const onRequest = (request, response) => {
   const parsedURL = url.parse(request.url);
-  
+
   // Directing request to where it needs to go
   if (request.method === 'POST') {
     handlePostReq(request, response, parsedURL);
