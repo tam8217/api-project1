@@ -148,7 +148,7 @@ var handleResponse = function handleResponse(xhr, type) {
 
               _songCol.innerHTML = "" + _incJSON.data[_index2].title_short;
               _artistCol.innerHTML = "" + _incJSON.data[_index2].artist.name;
-              _buttonCol.innerHTML = "Placeholder";
+              _buttonCol.innerHTML = "<input type=\"submit\" class=\"w3-button w3-round-large\" value=\"Add to Playlist\" id=\"" + _index2 + "\">";
             }
 
             resultsArea.addEventListener('click', function (e) {

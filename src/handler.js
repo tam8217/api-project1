@@ -98,19 +98,23 @@ const addPlayList = (request, response, incomingData) => {
   let statusCode = 201;
   let exists = false;
   let songs = {};
+  let desiredIndex = playlists.totalPlaylists;
   for (let index = 0; index < playlists.totalPlaylists; index++) 
   {
     if(playlists.list[index].name == incomingData.playlistName)
     {
       exists = true;
       songs = playlists.list[index].songs;
+      desiredIndex = index;
       //statusCode = 204;
     }
   }
 
   if(exists == false)
   {
-    playlists.list[playlists.totalPlaylists] = { songs, length: 0, name: incomingData.playlistName };
+    playlists.list[desiredIndex] = { songs, length: 0, name: incomingData.playlistName };
+    playlists.totalPlaylists++;
+
   }
   console.log("error2");
   // If spot already exists, set it to update
@@ -121,7 +125,7 @@ const addPlayList = (request, response, incomingData) => {
     playlists[incomingData.playlistName] = { songs, length: 0, name: incomingData.playlistName };
   }
   */
-  const currentSongNum = playlists.list[playlists.totalPlaylists].length;
+  const currentSongNum = playlists.list[desiredIndex].length;
   // Assign values
   const songJSON = {
     song: incomingData.song,
@@ -131,9 +135,9 @@ const addPlayList = (request, response, incomingData) => {
 
   songs[currentSongNum] = songJSON;
 
-  playlists.list[playlists.totalPlaylists].songs = songs;
-  playlists.list[playlists.totalPlaylists].length = currentSongNum + 1;
-  playlists.totalPlaylists++;
+  playlists.list[desiredIndex].songs = songs;
+  playlists.list[desiredIndex].length = currentSongNum + 1;
+ 
 console.log("error3");
  return respondJSON(request, response, statusCode, playlists.list[playlists.totalPlaylists-1]);
 };

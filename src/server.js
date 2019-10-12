@@ -71,7 +71,7 @@ const handlePostReq = (request, response, parsedURL) => {
 
 const onRequest = (request, response) => {
   const parsedURL = url.parse(request.url);
-  console.log(parsedURL.pathname);
+  
   // Directing request to where it needs to go
   if (request.method === 'POST') {
     handlePostReq(request, response, parsedURL);

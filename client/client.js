@@ -159,8 +159,7 @@ const handleResponse = (xhr, type) => {
 
             songCol.innerHTML = `${incJSON.data[index].title_short}`;
             artistCol.innerHTML = `${incJSON.data[index].artist.name}`;
-            buttonCol.innerHTML = "Placeholder";
-            
+            buttonCol.innerHTML = `<input type="submit" class="w3-button w3-round-large" value="Add to Playlist" id="${index}">`;
           }
 
           resultsArea.addEventListener('click', function(e){
