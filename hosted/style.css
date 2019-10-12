@@ -10,9 +10,9 @@ html, body {
     text-align: center;
     border: 2px solid black;
     background: rgba(80, 80 , 80, .3);
-    width: 40%; 
+    /*width: 40%; */
     margin: 0 auto;
-    height: 20%;
+    /*height: 20%;*/
 }
 
 .rainbow-text {
@@ -23,4 +23,8 @@ html, body {
   }
 #displayArea {
   display: inline-block;
+}
+
+#playlistInput{
+  padding-bottom: 20px;
 }

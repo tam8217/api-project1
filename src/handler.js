@@ -1,3 +1,5 @@
+//ERROR: If there is no playlist name, and you attempt to add it, then fix it, it will technically add a blank entry so it don't work
+
 const fs = require('fs'); // pull in the file system module
 var unirest = require("unirest");
 
@@ -42,7 +44,7 @@ const respondJSON = (request, response, status, object) => {
 };
 */
 
-const playlists = {};
+const playlists = {totalPlaylists:0, list:[]};
 
 const success = (request, response) => {
   const responseJSON = {
@@ -83,21 +85,43 @@ const addPlayList = (request, response, incomingData) => {
   // Checking parameters of the incoming incomingData
   if (!incomingData.artist || !incomingData.song || !incomingData.playlistName) {
     tempObj.id = 'missingParams';
+    console.log("Error1");
     return respondJSON(request, response, 400, tempObj);
   }
 
+  let playName = incomingData.playlistName;
+  if(playName.includes("+"))
+  {
+    playName = playName.replace("+", " ");
+  }
   // Status code for creating an item
   let statusCode = 201;
+  let exists = false;
   let songs = {};
+  for (let index = 0; index < playlists.totalPlaylists; index++) 
+  {
+    if(playlists.list[index].name == incomingData.playlistName)
+    {
+      exists = true;
+      songs = playlists.list[index].songs;
+      //statusCode = 204;
+    }
+  }
+
+  if(exists == false)
+  {
+    playlists.list[playlists.totalPlaylists] = { songs, length: 0, name: incomingData.playlistName };
+  }
+  console.log("error2");
   // If spot already exists, set it to update
-  if (playlists[incomingData.playlistName]) {
+  /*if (playlists[incomingData.playlistName]) {
     songs = playlists[incomingData.playlistName].songs;
     statusCode = 204;
   } else {
     playlists[incomingData.playlistName] = { songs, length: 0, name: incomingData.playlistName };
   }
-
-  const currentSongNum = playlists[incomingData.playlistName].length;
+  */
+  const currentSongNum = playlists.list[playlists.totalPlaylists].length;
   // Assign values
   const songJSON = {
     song: incomingData.song,
@@ -107,11 +131,11 @@ const addPlayList = (request, response, incomingData) => {
 
   songs[currentSongNum] = songJSON;
 
-  playlists[incomingData.playlistName].songs = songs;
-  playlists[incomingData.playlistName].length = currentSongNum + 1;
-
- return respondJSON(request, response, statusCode, playlists[incomingData.playlistName]);
-
+  playlists.list[playlists.totalPlaylists].songs = songs;
+  playlists.list[playlists.totalPlaylists].length = currentSongNum + 1;
+  playlists.totalPlaylists++;
+console.log("error3");
+ return respondJSON(request, response, statusCode, playlists.list[playlists.totalPlaylists-1]);
 };
 
 const searchSong = (request, response, incomingData) =>{
@@ -119,16 +143,13 @@ const searchSong = (request, response, incomingData) =>{
   const tempObj = {
     message: 'At least an Artist or Song Name is requireed',
   };
-  console.log(incomingData);
   // Checking parameters of the incoming incomingData
   if (!incomingData.artist && !incomingData.song ) {
     tempObj.id = 'missingParams';
     return respondJSON(request, response, 400, tempObj);
   }
   var req = unirest("GET", "https://deezerdevs-deezer.p.rapidapi.com/search");
-  let data;
-  let total;
-  let songsJSON = {};
+  //let songsJSON = {};
   req.query({
     "q": `${incomingData.artist} ${incomingData.song}`
   });
@@ -141,13 +162,14 @@ const searchSong = (request, response, incomingData) =>{
 
   req.end(function (res) {
     if (res.error) throw new Error(res.error);
-    console.log(res.body);
-    songsJSON = res.body;
-    console.log(songsJSON);
-    return respondJSON(request, response, 200, songsJSON);
+    //songsJSON = res.body;
+    
+    return respondJSON(request, response, 200, res.body);
   });
-  
-  
+};
+
+const loadPlaylists = (request, response) =>{
+  return respondJSON(request, response, 200, playlists);
 };
 module.exports = {
   getIndex,
@@ -157,5 +179,6 @@ module.exports = {
   notFound,
   getCSS,
   addPlayList,
-  searchSong
+  searchSong,
+  loadPlaylists
 };
