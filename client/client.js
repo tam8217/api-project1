@@ -38,7 +38,7 @@ const handleResponse = (xhr, type) => {
     if(type == "add")
     {
       //Grabbing the area where the playlists will be displayed
-      const content = document.querySelector('#displayArea');
+      let content = document.querySelector('#displayArea');
       //Parse the JSON and write it out
       const incJSON = JSON.parse(xhr.response);
 
@@ -63,7 +63,7 @@ const handleResponse = (xhr, type) => {
         info.innerHTML = `<p>${incJSON.songs[currentSpot].orderInList}. ${incJSON.songs[currentSpot].song} - ${incJSON.songs[currentSpot].artist}`;
 
         //Making the order in list accessible in the class - also making the element fade in with the w3 schools CSS framework
-        info.className = `${incJSON.songs[currentSpot].orderInList} w3-animate-opacity`;
+        info.className = `${incJSON.songs[currentSpot].orderInList} w3-animate-opacity w3-border-black`;
 
         //Add the paragraph to the rest of the playlist
         //currentList.appendChild(info);
@@ -74,6 +74,26 @@ const handleResponse = (xhr, type) => {
       //aka the playlist has not been created
       else
       {
+
+        let totalArea = document.querySelector("#num");
+
+        let totalString = totalArea.innerText;
+        let totalNum = parseInt(totalString);
+
+        if(totalNum % 3 == 0 && totalNum!=0)
+        {
+          content.id = "oldDisplayArea";
+          let tempCont = document.createElement("div");
+          tempCont.id = "displayArea";
+          tempCont.className = "w3-cell-row"
+
+
+          //Used to insert the new content row after the old display area
+          //Utilizes the InsertAfter function from this link 
+          //https://plainjs.com/javascript/manipulation/insert-an-element-after-or-before-another-32/
+          content.parentNode.insertBefore(tempCont, content.nextSibling);
+          content = tempCont;
+        }
         //console.log(incJSON);
         //Create a div to hold the playlist 
         let newList = document.createElement("div");
@@ -83,15 +103,17 @@ const handleResponse = (xhr, type) => {
         //Giving the div the name of the playlist as a class so it can be accessed later
         //Also making it fade in upoon creation, and display in a row with other playlists
         //newList.className = `${incJSON.name} w3-animate-opacity w3-col w3-container`;
-        newList.className = `${incJSON.name} w3-animate-opacity w3-card-2`;
+        newList.className = `${incJSON.name} w3-animate-opacity  w3-cell w3-padding`;
 
         //Setting the name of the playlist to be the name when created, and attaching it to the div
         /*const title = document.createElement("h1");
         title.innerHTML = `<h1>Playlist Name: ${incJSON.name}</h1>`;
         */
         const head = document.createElement("header");
-        head.className = "w3-container w3-gray";
+        head.className = "w3-container w3-gray w3-border-black";
         head.innerHTML = `<h1>Playlist name: ${incJSON.name}`;
+        //head.onclick = dropDown(incJSON.name);
+        //head.addEventListener("click", dropDown(incJSON.name));
         newList.appendChild(head);
 
         let listBlock = document.createElement("div");
@@ -101,13 +123,15 @@ const handleResponse = (xhr, type) => {
         {
           let info = document.createElement("p");
           info.innerHTML = `<p>${incJSON.songs[i].orderInList}. ${incJSON.songs[i].song} - ${incJSON.songs[i].artist}`;
-          info.className = incJSON.songs[i].orderInList;
+          info.className = `${incJSON.songs[i].orderInList} w3-border-black`;
           //newList.appendChild(info);
           listBlock.appendChild(info);
         }
         newList.appendChild(listBlock);
         //Adding the newly created element to the specific area
         content.appendChild(newList);
+
+        totalArea.innerHTML = `<p>${totalNum+1}`;
       }
     }
     else if (type == "search")
@@ -257,7 +281,6 @@ const handleResponse = (xhr, type) => {
     else if(type == "load")
     {
       const incJSON = JSON.parse(xhr.response);
-      //console.log(incJSON);
 
       //If there are previously loaded playlists
       if(incJSON.totalPlaylists != 0)
@@ -299,7 +322,37 @@ const handleResponse = (xhr, type) => {
   }
 };
 
-
+/*const dropDown = (currentID) =>{
+  let list = document.querySelector(`#${currentID}`).querySelector("#list");
+  if(list.className.contains("w3-show"))
+  {
+    list.className = list.className.replace(" w3-show","");
+  }
+  else{
+    list.className+= " w3-show";
+  }
+};
+*/
+/*
+function dropDown(currentID)
+{
+  //let list = document.querySelector(`#${currentID}`).querySelector("#list");
+  let block = document.querySelector(`#${currentID}`);
+  console.log("here");
+  if(block != null)
+  {
+    console.log("there");
+    let list = block.querySelector("#list");
+    if(list.className.contains("w3-show"))
+    {
+      list.className = list.className.replace(" w3-show","");
+    }
+    else{
+      list.className+= " w3-show";
+    }
+  }
+}
+*/
 const addToPlaylist = (e, song, artist, name) =>{
   //Actual user data inputted
   //If the playlist name includes spaces, set them to be Plus signs instead

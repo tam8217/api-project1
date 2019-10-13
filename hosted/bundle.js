@@ -61,7 +61,7 @@ var handleResponse = function handleResponse(xhr, type) {
         info.innerHTML = "<p>" + incJSON.songs[currentSpot].orderInList + ". " + incJSON.songs[currentSpot].song + " - " + incJSON.songs[currentSpot].artist;
 
         //Making the order in list accessible in the class - also making the element fade in with the w3 schools CSS framework
-        info.className = incJSON.songs[currentSpot].orderInList + " w3-animate-opacity";
+        info.className = incJSON.songs[currentSpot].orderInList + " w3-animate-opacity w3-border-black";
 
         //Add the paragraph to the rest of the playlist
         //currentList.appendChild(info);
@@ -71,6 +71,24 @@ var handleResponse = function handleResponse(xhr, type) {
       //If there is not an element on the page which already has the class name 
       //aka the playlist has not been created
       else {
+
+          var totalArea = document.querySelector("#num");
+
+          var totalString = totalArea.innerText;
+          var totalNum = parseInt(totalString);
+
+          if (totalNum % 3 == 0 && totalNum != 0) {
+            content.id = "oldDisplayArea";
+            var tempCont = document.createElement("div");
+            tempCont.id = "displayArea";
+            tempCont.className = "w3-cell-row";
+
+            //Used to insert the new content row after the old display area
+            //Utilizes the InsertAfter function from this link 
+            //https://plainjs.com/javascript/manipulation/insert-an-element-after-or-before-another-32/
+            content.parentNode.insertBefore(tempCont, content.nextSibling);
+            content = tempCont;
+          }
           //console.log(incJSON);
           //Create a div to hold the playlist 
           var newList = document.createElement("div");
@@ -80,15 +98,17 @@ var handleResponse = function handleResponse(xhr, type) {
           //Giving the div the name of the playlist as a class so it can be accessed later
           //Also making it fade in upoon creation, and display in a row with other playlists
           //newList.className = `${incJSON.name} w3-animate-opacity w3-col w3-container`;
-          newList.className = incJSON.name + " w3-animate-opacity w3-card-2";
+          newList.className = incJSON.name + " w3-animate-opacity  w3-cell w3-padding";
 
           //Setting the name of the playlist to be the name when created, and attaching it to the div
           /*const title = document.createElement("h1");
           title.innerHTML = `<h1>Playlist Name: ${incJSON.name}</h1>`;
           */
           var head = document.createElement("header");
-          head.className = "w3-container w3-gray";
+          head.className = "w3-container w3-gray w3-border-black";
           head.innerHTML = "<h1>Playlist name: " + incJSON.name;
+          //head.onclick = dropDown(incJSON.name);
+          //head.addEventListener("click", dropDown(incJSON.name));
           newList.appendChild(head);
 
           var listBlock = document.createElement("div");
@@ -97,13 +117,15 @@ var handleResponse = function handleResponse(xhr, type) {
           for (var i = 0; i < incJSON.length; i++) {
             var _info = document.createElement("p");
             _info.innerHTML = "<p>" + incJSON.songs[i].orderInList + ". " + incJSON.songs[i].song + " - " + incJSON.songs[i].artist;
-            _info.className = incJSON.songs[i].orderInList;
+            _info.className = incJSON.songs[i].orderInList + " w3-border-black";
             //newList.appendChild(info);
             listBlock.appendChild(_info);
           }
           newList.appendChild(listBlock);
           //Adding the newly created element to the specific area
           content.appendChild(newList);
+
+          totalArea.innerHTML = "<p>" + (totalNum + 1);
         }
     } else if (type == "search") {
       //Retrieving the area to display the search results
@@ -240,7 +262,6 @@ var handleResponse = function handleResponse(xhr, type) {
       }
     } else if (type == "load") {
       var _incJSON2 = JSON.parse(xhr.response);
-      //console.log(incJSON);
 
       //If there are previously loaded playlists
       if (_incJSON2.totalPlaylists != 0) {
@@ -278,6 +299,37 @@ var handleResponse = function handleResponse(xhr, type) {
     }
 };
 
+/*const dropDown = (currentID) =>{
+  let list = document.querySelector(`#${currentID}`).querySelector("#list");
+  if(list.className.contains("w3-show"))
+  {
+    list.className = list.className.replace(" w3-show","");
+  }
+  else{
+    list.className+= " w3-show";
+  }
+};
+*/
+/*
+function dropDown(currentID)
+{
+  //let list = document.querySelector(`#${currentID}`).querySelector("#list");
+  let block = document.querySelector(`#${currentID}`);
+  console.log("here");
+  if(block != null)
+  {
+    console.log("there");
+    let list = block.querySelector("#list");
+    if(list.className.contains("w3-show"))
+    {
+      list.className = list.className.replace(" w3-show","");
+    }
+    else{
+      list.className+= " w3-show";
+    }
+  }
+}
+*/
 var addToPlaylist = function addToPlaylist(e, song, artist, name) {
   //Actual user data inputted
   //If the playlist name includes spaces, set them to be Plus signs instead
