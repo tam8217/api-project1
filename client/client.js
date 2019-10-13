@@ -2,8 +2,10 @@
 //Get Request with parameters
 const handleResponse = (xhr, type) => {
 
+  //Getting the place to display the message
   let messageArea = document.querySelector("#messageDisplay");
 
+  //Notifying the user the status of their request
   switch(xhr.status)
   {
     case 200:
@@ -37,53 +39,62 @@ const handleResponse = (xhr, type) => {
       const content = document.querySelector('#displayArea');
       //Parse the JSON and write it out
       const incJSON = JSON.parse(xhr.response);
-      //console.log(incJSON);
+
+      //Getting elements on the page that have the class name corresponding to the name of the playlist that came back
+      let list = document.getElementsByClassName(`${incJSON.name}`);
+
+      //If there is a playlist that matches the class, add the object to the playlist instead of remaking the playlist
+      if(list.length == 1)
       {
-        //let list = document.querySelector(`.${incJSON.name}`);
-        let list = document.getElementsByClassName(`${incJSON.name}`);
+        //Getting the list we are looking at
+        let currentList = list[0];
 
-        //console.log(list);
-        if(list.length == 1)
+        //Looking at the song at the end of the list 
+        let currentSpot = incJSON.length-1;
+
+        //Creating a paragraph to be added on to the list
+        let info = document.createElement("p");
+
+        //Formatting the contents to contain the important information
+        info.innerHTML = `<p>${incJSON.songs[currentSpot].orderInList}. ${incJSON.songs[currentSpot].song} - ${incJSON.songs[currentSpot].artist}`;
+
+        //Making the order in list accessible in the class - also making the element fade in with the w3 schools CSS framework
+        info.className = `${incJSON.songs[currentSpot].orderInList} w3-animate-opacity`;
+
+        //Add the paragraph to the rest of the playlist
+        currentList.appendChild(info);
+      }
+
+      //If there is not an element on the page which already has the class name 
+      //aka the playlist has not been created
+      else
+      {
+        //Create a div to hold the playlist 
+        let newList = document.createElement("div");
+
+
+        newList.id = incJSON.name;
+
+        //Giving the div the name of the playlist as a class so it can be accessed later
+        //Also making it fade in upoon creation, and display in a row with other playlists
+        newList.className = `${incJSON.name} w3-animate-opacity w3-container w3-cell`;
+
+        //Setting the name of the playlist to be the name when created, and attaching it to the div
+        const title = document.createElement("h1");
+        title.innerHTML = `<h1>Playlist Name: ${incJSON.name}</h1>`;
+        newList.appendChild(title);
+
+        for(let i = 0; i < incJSON.length; i++)
         {
-            let currentList = list[0];
-            let currentSpot = incJSON.length-1;
-            let info = document.createElement("p");
-            info.innerHTML = `<p>${incJSON.songs[currentSpot].orderInList}. ${incJSON.songs[currentSpot].song} - ${incJSON.songs[currentSpot].artist}`;
-            info.className = incJSON.songs[currentSpot].orderInList;
-            info.style = "display:none";
-            currentList.appendChild(info);
-            $(`.${incJSON.name} > .${incJSON.songs[currentSpot].orderInList}`).fadeIn("slow", function(){});
+
+          let info = document.createElement("p");
+          info.innerHTML = `<p>${incJSON.songs[i].orderInList}. ${incJSON.songs[i].song} - ${incJSON.songs[i].artist}`;
+          info.className = incJSON.songs[i].orderInList;
+          newList.appendChild(info);
         }
-        else
-        {
-          let newList = document.createElement("div");
-          newList.id = incJSON.name;
-          newList.className = incJSON.name;
-          //newList.style = "display:inline";
-
-          //newList.style = "display:none";
-          //newList.style = "opacity:0";
-          
-          const title = document.createElement("h1");
-          title.innerHTML = `<h1>Playlist Name: ${incJSON.name}</h1>`;
-          newList.appendChild(title);
-
-          for(let i = 0; i < incJSON.length; i++)
-          {
-
-            let info = document.createElement("p");
-            info.innerHTML = `<p>${incJSON.songs[i].orderInList}. ${incJSON.songs[i].song} - ${incJSON.songs[i].artist}`;
-            info.className = incJSON.songs[i].orderInList;
-            newList.appendChild(info);
-          }
-          
-          content.appendChild(newList);
-          /*$(content).append(newList);
-          $(`.${incJSON.name}`).fadeIn("slow", function(){
-            //$(`.${incJSON.name}`).css("display", "inline");
-          });
-          */
-        }
+        
+        //Adding the newly created element to the specific area
+        content.appendChild(newList);
       }
     }
     else if (type == "search")
@@ -94,13 +105,21 @@ const handleResponse = (xhr, type) => {
       //console.log(incJSON);
       if(incJSON.total != 0)
       {
+        //Seeting up a display for the search results
         resultsArea.innerHTML = "<b>Here are your results:</b>";
-        //resultsArea.addEventListener('click', function(){console.log("s")});
+        
+        //Creating a table
         let resultsTable = document.createElement('table');
+        //Styling it using w3 School's framework
         resultsTable.className = "w3-table-all";
+
+        //Giving it an easy id so it can be retrieved later
         resultsTable.id = "results";
+
+        //Adding it to the results area
         resultsArea.append(resultsTable);
 
+        //Creating the top row of cells which will give the columns their names
         let headRow = resultsTable.insertRow();
         let songHead = headRow.insertCell();
         let artistHead = headRow.insertCell();
@@ -119,17 +138,21 @@ const handleResponse = (xhr, type) => {
         if(incJSON.total <= 5)
         {
           for (let index = 0; index < incJSON.total; index++) {
+
+            //Creating the new row to hold the cells
             let newRow = resultsTable.insertRow();
+
+            //Creating cells for each piece of data
             let songCol = newRow.insertCell();
             let artistCol = newRow.insertCell();
             let buttonCol =  newRow.insertCell();
 
+            //Setting the info from the request
             songCol.innerHTML = `${incJSON.data[index].title_short}`;
             artistCol.innerHTML = `${incJSON.data[index].artist.name}`;
             
-            buttonCol.innerHTML = `<input type="submit" class="w3-button w3-round-large" value="Add to Playlist" id="${index}">`;
-
-
+            //Creating a button which can be used to add it to the playlist
+            buttonCol.innerHTML = `<input type="button" class="w3-button w3-round-large w3-right-align" value="Add to Playlist" id="${index}">`;
           }
 
           //Saving the number of songs displayed
@@ -143,7 +166,23 @@ const handleResponse = (xhr, type) => {
             for (let index = 0; index < incJSON.total; index++) {
               if(e.target.id == index)
               {
-                addToPlaylist(e, incJSON.data[index].title_short, incJSON.data[index].artist.name);
+                //Getting the name of the playlist the user entered
+                const playlistName = document.querySelector("#playlistInput").querySelector('#playlistField');
+                
+                //Checking the name to make sure it is not just blank
+                let name = playlistName.value;
+                name = name.trim();
+
+                //If the playlist name is not blank, send a request to add it
+                if(name != "")
+                {
+                  addToPlaylist(e, incJSON.data[index].title_short, incJSON.data[index].artist.name, name);
+                  break;
+                }
+                else
+                {
+                  messageArea.innerHTML = "<b>Please input a playlist name!</b>";
+                }
               }
             }
           });
@@ -159,14 +198,32 @@ const handleResponse = (xhr, type) => {
 
             songCol.innerHTML = `${incJSON.data[index].title_short}`;
             artistCol.innerHTML = `${incJSON.data[index].artist.name}`;
-            buttonCol.innerHTML = `<input type="submit" class="w3-button w3-round-large" value="Add to Playlist" id="${index}">`;
+            buttonCol.innerHTML = `<input type="button" class="w3-button w3-round-large w3-right-align" value="Add to Playlist" id="${index}">`;
           }
 
           resultsArea.addEventListener('click', function(e){
             for (let index = 0; index < 5; index++) {
               if(e.target.id == index)
               {
-                addToPlaylist(e, incJSON.data[index].title_short, incJSON.data[index].artist.name);
+                //Getting the name of the playlist from what the user inputted
+                const playlistName = document.querySelector("#playlistInput").querySelector('#playlistField');
+                
+                //Reassign it so it can be modified
+                let name = playlistName.value;
+
+                //Remove white space to make sure it is not just spaces
+                name = name.trim();
+
+                //Only adding the song to the playlist as long as there is a playlist name
+                if(name != "")
+                {
+                  addToPlaylist(e, incJSON.data[index].title_short, incJSON.data[index].artist.name, name);
+                }
+                //Error check to notify the user that they need a playlist name before adding
+                else
+                {
+                  messageArea.innerHTML = "<b>Please input a playlist name!</b>";
+                }
               }
             }
           });
@@ -194,11 +251,12 @@ const handleResponse = (xhr, type) => {
         //Looping through all of the playlists stored
         for (let index = 0; index < incJSON.totalPlaylists; index++) 
         {
+          //Creating the div for the playlist
           let newList = document.createElement("div");
-          newList.id = incJSON.name;
-          newList.className = incJSON.name;
-
+          newList.id = incJSON.list[index].name;
+          newList.className = incJSON.list[index].name;
           
+          //Setting title and adding it to list
           const title = document.createElement("h1");
           title.innerHTML = `<h1>Playlist Name: ${incJSON.list[index].name}</h1>`;
           newList.appendChild(title);
@@ -206,6 +264,7 @@ const handleResponse = (xhr, type) => {
           //Looping through each playlist and making elements for all of their songs
           for (let j = 0; j < incJSON.list[index].length; j++) 
           {
+            //Creating the element to be added to the list, and then adding it to the div for the playlist
             let info = document.createElement("p");
             info.innerHTML = `<p>${incJSON.list[index].songs[j].orderInList}. ${incJSON.list[index].songs[j].song} - ${incJSON.list[index].songs[j].artist}`;
             info.className = incJSON.list[index].songs[j].orderInList;
@@ -216,6 +275,7 @@ const handleResponse = (xhr, type) => {
       }
     }
   }
+  //Resetting the results area if there is a bad search
   else
   {
     let resultsArea = document.querySelector("#resultsArea");
@@ -224,11 +284,9 @@ const handleResponse = (xhr, type) => {
 };
 
 
-const addToPlaylist = (e, song, artist) =>{
+const addToPlaylist = (e, song, artist, name) =>{
   //Actual user data inputted
-  const playlistName = document.querySelector("#playlistInput").querySelector('#playlistField');
   
-  let name = playlistName.value;
   if(name.includes(" "))
   {
     name = name.replace(" ", "+");
@@ -257,9 +315,10 @@ const addToPlaylist = (e, song, artist) =>{
 };
 
 const searchSongs = (e, playlistForm) =>{
+  //Creating a loading message to let the user know their search is going through
   let messageArea = document.querySelector("#messageDisplay");
-
   messageArea.innerHTML = "<b>Searching!</b>";
+
   //Actual user data inputted
   const artist = playlistForm.querySelector('#artistField');
   const song = playlistForm.querySelector('#songField');
@@ -278,6 +337,7 @@ const searchSongs = (e, playlistForm) =>{
   //Setting what happens when it's done
   xhr.onload = () => handleResponse(xhr,"search");
 
+  //Sending the request
   xhr.send();
   e.preventDefault();
 
@@ -287,6 +347,7 @@ const searchSongs = (e, playlistForm) =>{
 //Sending a basic request when the page loads which will load in all of the previously created playlists
 const loadSongs = ()=>{
 
+  //Creating request
   const xhr = new XMLHttpRequest();
   
   //Setting up the request
@@ -303,10 +364,13 @@ const loadSongs = ()=>{
 };
 const init = () => {
 
+  //Making it so that clicking on the search button will actually search
   const playlistForm = document.querySelector("#playlistInput");
   const songSearch = (e) => searchSongs(e, playlistForm);
-  loadSongs();
   playlistForm.addEventListener('submit', songSearch);
+
+  //Preloading the page with all of the playlists which have been created
+  loadSongs();
 };
 
 window.onload = init;

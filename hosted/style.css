@@ -28,3 +28,12 @@ html, body {
 #playlistInput{
   padding-bottom: 20px;
 }
+
+#errorBox{
+  text-align: center;
+    border: 2px solid black;
+    background: rgba(80, 80 , 80, .3);
+    /*width: 40%; */
+    margin: auto auto;
+    /*height: 20%;*/
+}
