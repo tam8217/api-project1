@@ -3,16 +3,25 @@ html, body {
     width: 100%;
     margin: 0;
     padding: 0;
-    background-image: linear-gradient(red, white);
+    /*background-image: linear-gradient(red, white);*/
+    background: cornflowerblue;
 }
 
 #searchArea{
     text-align: center;
     border: 2px solid black;
     background: rgba(80, 80 , 80, .3);
-    /*width: 40%; */
+    /*width: 40%; 
     margin: 0 auto;
-    /*height: 20%;*/
+    height: 20%;*/
+    /*margin-left: 16px;
+    margin-right: 16px;  
+    */
+    /*position: fixed;*/
+    /*right:50%;*/
+    width: 90%;
+    margin-left: 5%;
+    top:0;
 }
 
 .rainbow-text {
@@ -23,6 +32,8 @@ html, body {
   }
 #displayArea {
   display: inline-block;
+  overflow: auto;
+  height: 40%;
 }
 
 #playlistInput{
@@ -31,9 +42,9 @@ html, body {
 
 #errorBox{
   text-align: center;
-    border: 2px solid black;
-    background: rgba(80, 80 , 80, .3);
-    /*width: 40%; */
-    margin: auto auto;
-    /*height: 20%;*/
+  border: 2px solid black;
+  background: rgba(80, 80 , 80, .3);
+  /*width: 40%; */
+  margin: auto auto;
+  /*height: 20%;*/
 }

@@ -31,10 +31,12 @@ var handleResponse = function handleResponse(xhr, type) {
       messageArea.innerHTML = "<b>Status Code Not Implemented!</b>";
       break;
   }
-  //console.log(xhr.response);
+
   //Parsing JSON if necessary
+  //Not parsing on a bad response
   if (xhr.status != 400 && xhr.status != 404) {
     if (type == "add") {
+      //Grabbing the area where the playlists will be displayed
       var content = document.querySelector('#displayArea');
       //Parse the JSON and write it out
       var incJSON = JSON.parse(xhr.response);
@@ -44,9 +46,11 @@ var handleResponse = function handleResponse(xhr, type) {
 
       //If there is a playlist that matches the class, add the object to the playlist instead of remaking the playlist
       if (list.length == 1) {
+        //ERROR: Check the length and see if there is already an element with that tag
         //Getting the list we are looking at
         var currentList = list[0];
 
+        var songList = currentList.querySelector("#list");
         //Looking at the song at the end of the list 
         var currentSpot = incJSON.length - 1;
 
@@ -60,12 +64,14 @@ var handleResponse = function handleResponse(xhr, type) {
         info.className = incJSON.songs[currentSpot].orderInList + " w3-animate-opacity";
 
         //Add the paragraph to the rest of the playlist
-        currentList.appendChild(info);
+        //currentList.appendChild(info);
+        songList.appendChild(info);
       }
 
       //If there is not an element on the page which already has the class name 
       //aka the playlist has not been created
       else {
+          //console.log(incJSON);
           //Create a div to hold the playlist 
           var newList = document.createElement("div");
 
@@ -73,25 +79,34 @@ var handleResponse = function handleResponse(xhr, type) {
 
           //Giving the div the name of the playlist as a class so it can be accessed later
           //Also making it fade in upoon creation, and display in a row with other playlists
-          newList.className = incJSON.name + " w3-animate-opacity w3-container w3-cell";
+          //newList.className = `${incJSON.name} w3-animate-opacity w3-col w3-container`;
+          newList.className = incJSON.name + " w3-animate-opacity w3-card-2";
 
           //Setting the name of the playlist to be the name when created, and attaching it to the div
-          var title = document.createElement("h1");
-          title.innerHTML = "<h1>Playlist Name: " + incJSON.name + "</h1>";
-          newList.appendChild(title);
+          /*const title = document.createElement("h1");
+          title.innerHTML = `<h1>Playlist Name: ${incJSON.name}</h1>`;
+          */
+          var head = document.createElement("header");
+          head.className = "w3-container w3-gray";
+          head.innerHTML = "<h1>Playlist name: " + incJSON.name;
+          newList.appendChild(head);
 
+          var listBlock = document.createElement("div");
+          listBlock.className = "w3-container w3-white";
+          listBlock.id = "list";
           for (var i = 0; i < incJSON.length; i++) {
-
             var _info = document.createElement("p");
             _info.innerHTML = "<p>" + incJSON.songs[i].orderInList + ". " + incJSON.songs[i].song + " - " + incJSON.songs[i].artist;
             _info.className = incJSON.songs[i].orderInList;
-            newList.appendChild(_info);
+            //newList.appendChild(info);
+            listBlock.appendChild(_info);
           }
-
+          newList.appendChild(listBlock);
           //Adding the newly created element to the specific area
           content.appendChild(newList);
         }
     } else if (type == "search") {
+      //Retrieving the area to display the search results
       var resultsArea = document.querySelector("#resultsArea");
 
       var _incJSON = JSON.parse(xhr.response);
@@ -169,9 +184,12 @@ var handleResponse = function handleResponse(xhr, type) {
                 if (name != "") {
                   addToPlaylist(e, _incJSON.data[_index].title_short, _incJSON.data[_index].artist.name, name);
                   break;
-                } else {
-                  messageArea.innerHTML = "<b>Please input a playlist name!</b>";
                 }
+
+                //Error check to make sure the user does not send a faulty request without having a playlist name
+                else {
+                    messageArea.innerHTML = "<b>Please input a playlist name!</b>";
+                  }
               }
             }
           });
@@ -236,9 +254,9 @@ var handleResponse = function handleResponse(xhr, type) {
           _newList.className = _incJSON2.list[_index4].name;
 
           //Setting title and adding it to list
-          var _title = document.createElement("h1");
-          _title.innerHTML = "<h1>Playlist Name: " + _incJSON2.list[_index4].name + "</h1>";
-          _newList.appendChild(_title);
+          var title = document.createElement("h1");
+          title.innerHTML = "<h1>Playlist Name: " + _incJSON2.list[_index4].name + "</h1>";
+          _newList.appendChild(title);
 
           //Looping through each playlist and making elements for all of their songs
           for (var j = 0; j < _incJSON2.list[_index4].length; j++) {
@@ -262,7 +280,8 @@ var handleResponse = function handleResponse(xhr, type) {
 
 var addToPlaylist = function addToPlaylist(e, song, artist, name) {
   //Actual user data inputted
-
+  //If the playlist name includes spaces, set them to be Plus signs instead
+  //Gets replaced back to spaces when adding to the playlist
   if (name.includes(" ")) {
     name = name.replace(" ", "+");
   }
@@ -295,6 +314,14 @@ var searchSongs = function searchSongs(e, playlistForm) {
   //Creating a loading message to let the user know their search is going through
   var messageArea = document.querySelector("#messageDisplay");
   messageArea.innerHTML = "<b>Searching!</b>";
+
+  //This code is used to 'reset' the results area and remove any event listeners
+  //This is necessary because event listeners are added directly to the div
+  //If not reset, the event listeners hang around, and causes multiple songs to be added at once
+  //Code taken from https://stackoverflow.com/a/9251864
+  var resultsArea = document.querySelector("#resultsArea");
+  var tempRes = resultsArea.cloneNode(true);
+  resultsArea.parentNode.replaceChild(tempRes, resultsArea);
 
   //Actual user data inputted
   var artist = playlistForm.querySelector('#artistField');

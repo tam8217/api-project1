@@ -12,20 +12,10 @@
   <script src="bundle.js"> </script>
 </head>
 <body>
-  <section id="searchArea">
+  <section id="searchArea" class="w3-container">
     <marquee behavior="scroll" direction="right" scrollamount="3">
       <h1 class="rainbow-text">Graphic design is my passion</h1>
     </marquee>
-
-    <!-- <form id="playlistInput" action="/addPlaylist" method="POST">
-      <label for="playlist">Playlist Name: </label>
-      <input id="playlistField" type="text" name="playlist" />
-      <label for="artist">Artist Name: </label>
-      <input id="artistField" type="text" name="artist" />
-      <label for="song">Song Name: </label>
-      <input id="songField" type="text" name="age" />
-      <input type="submit" value="Add Song To Playlist" />
-    </form> -->
     <form id="playlistInput" action="/searchSong" method="GET">
       <label for="playlist">Playlist Name: </label>
       <input id="playlistField" type="text" name="playlist" />
