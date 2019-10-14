@@ -142,7 +142,7 @@ var handleResponse = function handleResponse(xhr, type) {
           //Adding the newly created element to the specific area
           content.appendChild(newList);
           //Incrementing the amount of playlists
-          totalArea.innerHTML = "<span>" + (totalNum + 1) + "</span>";
+          totalArea.innerHTML = "<span><b>" + (totalNum + 1) + "</b></span>";
         }
     }
     //If the user has searched for a song, go through the process of formatting the results
@@ -275,7 +275,7 @@ var handleResponse = function handleResponse(xhr, type) {
               });
             }
           //Displaying the number of results
-          resultsArea.innerHTML += "<p>Displaying " + displayedSongs + " out of " + _incJSON.total;
+          resultsArea.innerHTML += "<p><b>Displaying " + displayedSongs + " out of " + _incJSON.total + "</b></p>";
         } else {
           //Resetting the area to have a message displayed instead of a table
           resultsArea.innerHTML = "<b>No songs found! Try refining your search.</b>";
@@ -348,7 +348,7 @@ var handleResponse = function handleResponse(xhr, type) {
               _content.appendChild(_newList);
 
               //Incrementing the amount of playlists
-              _totalArea.innerHTML = "<span>" + (_totalNum + 1) + "</span>";
+              _totalArea.innerHTML = "<span><b>" + (_totalNum + 1) + "</b></span>";
             }
           }
         }

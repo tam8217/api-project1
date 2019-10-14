@@ -148,7 +148,7 @@ const handleResponse = (xhr, type) => {
         //Adding the newly created element to the specific area
         content.appendChild(newList);
         //Incrementing the amount of playlists
-        totalArea.innerHTML = `<span>${totalNum+1}</span>`;
+        totalArea.innerHTML = `<span><b>${totalNum+1}</b></span>`;
       }
     }
     //If the user has searched for a song, go through the process of formatting the results
@@ -291,7 +291,7 @@ const handleResponse = (xhr, type) => {
           });
         }
         //Displaying the number of results
-        resultsArea.innerHTML += `<p>Displaying ${displayedSongs} out of ${incJSON.total}`;
+        resultsArea.innerHTML += `<p><b>Displaying ${displayedSongs} out of ${incJSON.total}</b></p>`;
       }
       else
       {
@@ -371,7 +371,7 @@ const handleResponse = (xhr, type) => {
           content.appendChild(newList);
           
           //Incrementing the amount of playlists
-          totalArea.innerHTML = `<span>${totalNum+1}</span>`;
+          totalArea.innerHTML = `<span><b>${totalNum+1}</b></span>`;
         }
       }
     }

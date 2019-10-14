@@ -21,7 +21,7 @@ const getCSS = (request, response) => {
   response.end();
 };
 
-//Sending to the 404 page
+// Sending to the 404 page
 const notFound = (request, response) => {
   response.writeHead(404, { 'Content-Type': 'text/html' });
   response.write(nf);
@@ -34,7 +34,7 @@ const getBundle = (request, response) => {
   response.end();
 };
 
-//Functions which will handle the sending out of data
+// Functions which will handle the sending out of data
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(object));
@@ -46,7 +46,7 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
-//Container for all the plaulists to be added
+// Container for all the plaulists to be added
 const playlists = { totalPlaylists: 0, list: [] };
 
 
@@ -79,7 +79,7 @@ const addPlayList = (request, response, incomingData) => {
 
   // Creating an index to decide what playlist is being modified, defaulting to the end
   let desiredIndex = playlists.totalPlaylists;
-  
+
   // Looping through all current playlists to see if one with the searched one exists
   for (let i = 0; i < playlists.totalPlaylists; i++) {
     if (playlists.list[i].name === incomingData.playlistName) {
