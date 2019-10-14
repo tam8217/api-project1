@@ -288,34 +288,34 @@ var handleResponse = function handleResponse(xhr, type) {
 
         var _content = document.querySelector('#displayArea');
 
-        //Getting the counter for the total number of playlists that have been created
-        var _totalArea = document.querySelector("#num");
-
-        //Getting the value of it, and then parsing it to an int
-        var _totalString = _totalArea.innerText;
-        var _totalNum = parseInt(_totalString);
-
-        //This is a check to make it such that after 3 elements being made, it will create a new row to hold the data
-        if (_totalNum % 3 == 0 && _totalNum != 0) {
-          //Changing the id of the results area so it is not added to again
-          _content.id = "oldDisplayArea";
-
-          //Creating a new div and changing its values
-          var _tempCont = document.createElement("div");
-          _tempCont.id = "displayArea";
-          _tempCont.className = "w3-cell-row";
-
-          //Used to insert the new content row after the old display area
-          //Utilizes the InsertAfter function from this link 
-          //https://plainjs.com/javascript/manipulation/insert-an-element-after-or-before-another-32/
-          _content.parentNode.insertBefore(_tempCont, _content.nextSibling);
-
-          //Assigning the newly created div to be the one about to be modified
-          _content = _tempCont;
-        }
-
         //Looping through all of the playlists stored
         for (var _index4 = 0; _index4 < _incJSON2.totalPlaylists; _index4++) {
+
+          //Getting the counter for the total number of playlists that have been created
+          var _totalArea = document.querySelector("#num");
+
+          //Getting the value of it, and then parsing it to an int
+          var _totalString = _totalArea.innerText;
+          var _totalNum = parseInt(_totalString);
+          console.log(_totalNum);
+          //This is a check to make it such that after 3 elements being made, it will create a new row to hold the data
+          if (_totalNum % 3 == 0 && _totalNum != 0) {
+            //Changing the id of the results area so it is not added to again
+            _content.id = "oldDisplayArea";
+
+            //Creating a new div and changing its values
+            var _tempCont = document.createElement("div");
+            _tempCont.id = "displayArea";
+            _tempCont.className = "w3-cell-row";
+
+            //Used to insert the new content row after the old display area
+            //Utilizes the InsertAfter function from this link 
+            //https://plainjs.com/javascript/manipulation/insert-an-element-after-or-before-another-32/
+            _content.parentNode.insertBefore(_tempCont, _content.nextSibling);
+
+            //Assigning the newly created div to be the one about to be modified
+            _content = _tempCont;
+          }
           //Creating the div for the playlist
           var _newList = document.createElement("div");
           _newList.id = _incJSON2.list[_index4].name;
