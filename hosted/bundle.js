@@ -438,7 +438,9 @@ var searchSongs = function searchSongs(e, playlistForm) {
 
   //Create request
   var xhr = new XMLHttpRequest();
-  var url = "/searchSong?artist=" + artist.value + "&song=" + song.value;
+
+  //Request URL, trimming the values so that the user cannot search for spaces
+  var url = "/searchSong?artist=" + artist.value.trim() + "&song=" + song.value.trim();
 
   //Setting up the request
   xhr.open('GET', url);

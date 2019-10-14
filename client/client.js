@@ -464,7 +464,9 @@ const searchSongs = (e, playlistForm) =>{
 
   //Create request
   const xhr = new XMLHttpRequest();
-  const url = `/searchSong?artist=${artist.value}&song=${song.value}`
+
+  //Request URL, trimming the values so that the user cannot search for spaces
+  const url = `/searchSong?artist=${artist.value.trim()}&song=${song.value.trim()}`;
 
   //Setting up the request
   xhr.open('GET', url);
