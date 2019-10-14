@@ -96,8 +96,8 @@ const addPlayList = (request, response, incomingData) => {
       // Set the index to be the current entry
       desiredIndex = i;
 
-      //This esentially is a 204 request, however, 204 requests are unable to send back data
-      //Therefore, it has to be sent back as a 201 or 200 status code
+      // This esentially is a 204 request, however, 204 requests are unable to send back data
+      // Therefore, it has to be sent back as a 201 or 200 status code
       // statusCode = 204;
     }
   }
@@ -177,16 +177,14 @@ const searchSong = (request, response, incomingData) => {
   return false;
 };
 
-//Head request for a created playlist, 201
-const addPlaylistHead = (request, response) => {return respondJSONMeta(request, response, 201)};
+// Head request for a created playlist, 201
+const addPlaylistHead = (request, response) => respondJSONMeta(request, response, 201);
 
-//404 call that returns the status code
-const notFoundHead = (request, response) =>{
-  return respondJSONMeta(request, response, 404);
-};
+// 404 call that returns the status code
+const notFoundHead = (request, response) => respondJSONMeta(request, response, 404);
 
-//Returning a success for loading in playlists, if it was needed
-const loadPlaylistsHead = (request, response) => {return respondJSONMeta(request, response, 200)};
+// Returning a success for loading in playlists, if it was needed
+const loadPlaylistsHead = (request, response) => respondJSONMeta(request, response, 200);
 
 // Simple function to send back all of the playlists which have been stored in this session
 const loadPlaylists = (request, response) => respondJSON(request, response, 200, playlists);
@@ -200,5 +198,5 @@ module.exports = {
   loadPlaylists,
   notFoundHead,
   loadPlaylistsHead,
-  addPlaylistHead
+  addPlaylistHead,
 };

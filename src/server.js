@@ -27,11 +27,9 @@ const handleHeadReq = (request, response, parsedURL) => {
   // Meta data from loading playlists in
   if (parsedURL.pathname === '/loadPlaylists') {
     handler.loadPlaylistsHead(request, response);
-  } else if(parsedURL.pathname === '/addPlaylist') //Meta data from adding playlists
-  {
+  } else if (parsedURL.pathname === '/addPlaylist') { // Meta data from adding playlists
     handler.addPlaylistHead(request, response);
-  }
-  else { // Catch all meta data, bad request meta data
+  } else { // Catch all meta data, bad request meta data
     handler.notFoundHead(request, response);
   }
 };
@@ -67,7 +65,7 @@ const handlePostReq = (request, response, parsedURL) => {
   }
 };
 
-//Handling requests from server
+// Handling requests from server
 const onRequest = (request, response) => {
   // Parsing incoming url
   const parsedURL = url.parse(request.url);
