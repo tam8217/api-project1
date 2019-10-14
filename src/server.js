@@ -23,12 +23,15 @@ const handleGetReq = (request, response, parsedURL) => {
   }
 };
 
-
 const handleHeadReq = (request, response, parsedURL) => {
-  // Getting meta data from GetUsers
-  if (parsedURL.pathname === '/getUsers') {
-    handler.getUsersHead(request, response);
-  } else { // Bad Page Request meta data
+  // Meta data from loading playlists in
+  if (parsedURL.pathname === '/loadPlaylists') {
+    handler.loadPlaylistsHead(request, response);
+  } else if(parsedURL.pathname === '/addPlaylist') //Meta data from adding playlists
+  {
+    handler.addPlaylistHead(request, response);
+  }
+  else { // Catch all meta data, bad request meta data
     handler.notFoundHead(request, response);
   }
 };
@@ -64,7 +67,9 @@ const handlePostReq = (request, response, parsedURL) => {
   }
 };
 
+//Handling requests from server
 const onRequest = (request, response) => {
+  // Parsing incoming url
   const parsedURL = url.parse(request.url);
 
   // Directing request to where it needs to go

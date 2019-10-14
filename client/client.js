@@ -1,39 +1,41 @@
-//Questions: 204 status, not retrieving parsed JSON
-//Get Request with parameters
+
 const handleResponse = (xhr, type) => {
 
   //Getting the place to display the message
   let messageArea = document.querySelector("#messageDisplay");
 
+  //Used to check if a bad response comes through
+  let dontParse = false;
   //Notifying the user the status of their request
+  //Handles bad requests, as successful requests are handled inside their respective checks
   switch(xhr.status)
   {
+    //Passing through positive status requests so it does not default
     case 200:
-      messageArea.innerHTML = "<b>Success!</b>";
-      break;
     case 201:
-        messageArea.innerHTML = "<b>Playlist Created!</b>";
-      break;
     case 204:
-        messageArea.innerHTML = "<b>Playlist Updated!</b>";
       break;
     case 400:
         messageArea.innerHTML = "<b>Bad Request! (Are all your parameters filled out?)</b>";
-      break;
+        dontParse = true;
+        break;
     case 404:
         messageArea.innerHTML = "<b>Not Found!</b>";
+        dontParse = true;
       break;
     case 500:
         messageArea.innerHTML = "<b>Internal Server Error!</b>";
+        dontParse = true;
       break;
     default:
         messageArea.innerHTML = "<b>Status Code Not Implemented!</b>";
+        dontParse = true;
       break;
   }
 
   //Parsing JSON if necessary
   //Not parsing on a bad response
-  if(xhr.status != 400 && xhr.status != 404)
+  if(dontParse == false)
   {
     if(type == "add")
     {
@@ -48,6 +50,9 @@ const handleResponse = (xhr, type) => {
       //If there is a playlist that matches the class, add the object to the playlist instead of remaking the playlist
       if(list.length == 1)
       {
+        //Would be the message that shows up whena 204 status code comes through
+        //However, since to update something, data is necessary, it comes in with a 201 status code instead
+        messageArea.innerHTML = "<b>Playlist Updated!</b>";
         //ERROR: Check the length and see if there is already an element with that tag
         //Getting the list we are looking at
         let currentList = list[0];
@@ -74,24 +79,32 @@ const handleResponse = (xhr, type) => {
       //aka the playlist has not been created
       else
       {
-
+        //Message which accompanies a 201 status code
+        messageArea.innerHTML = "<b>Playlist Created!</b>";
+        //Getting the counter for the total number of playlists that have been created
         let totalArea = document.querySelector("#num");
 
+        //Getting the value of it, and then parsing it to an int
         let totalString = totalArea.innerText;
         let totalNum = parseInt(totalString);
 
+        //This is a check to make it such that after 3 elements being made, it will create a new row to hold the data
         if(totalNum % 3 == 0 && totalNum!=0)
         {
+          //Changing the id of the results area so it is not added to again
           content.id = "oldDisplayArea";
+
+          //Creating a new div and changing its values
           let tempCont = document.createElement("div");
           tempCont.id = "displayArea";
           tempCont.className = "w3-cell-row"
-
 
           //Used to insert the new content row after the old display area
           //Utilizes the InsertAfter function from this link 
           //https://plainjs.com/javascript/manipulation/insert-an-element-after-or-before-another-32/
           content.parentNode.insertBefore(tempCont, content.nextSibling);
+
+          //Assigning the newly created div to be the one about to be modified
           content = tempCont;
         }
         //console.log(incJSON);
@@ -105,10 +118,7 @@ const handleResponse = (xhr, type) => {
         //newList.className = `${incJSON.name} w3-animate-opacity w3-col w3-container`;
         newList.className = `${incJSON.name} w3-animate-opacity  w3-cell w3-padding`;
 
-        //Setting the name of the playlist to be the name when created, and attaching it to the div
-        /*const title = document.createElement("h1");
-        title.innerHTML = `<h1>Playlist Name: ${incJSON.name}</h1>`;
-        */
+        //Creating a header to hold the name of the playlist and attaching it to the Div
         const head = document.createElement("header");
         head.className = "w3-container w3-gray w3-border-black";
         head.innerHTML = `<h1>Playlist name: ${incJSON.name}`;
@@ -116,26 +126,32 @@ const handleResponse = (xhr, type) => {
         //head.addEventListener("click", dropDown(incJSON.name));
         newList.appendChild(head);
 
+        //Creating a div to hold the songs, allows it to have w3 CSS applied to it
         let listBlock = document.createElement("div");
         listBlock.className = "w3-container w3-white";
         listBlock.id = "list";
         for(let i = 0; i < incJSON.length; i++)
         {
+          //Create the paragraph element
           let info = document.createElement("p");
+
+          //Formatting the information
           info.innerHTML = `<p>${incJSON.songs[i].orderInList}. ${incJSON.songs[i].song} - ${incJSON.songs[i].artist}`;
           info.className = `${incJSON.songs[i].orderInList} w3-border-black`;
-          //newList.appendChild(info);
           listBlock.appendChild(info);
         }
+
+        //Adding the list of songs to the list
         newList.appendChild(listBlock);
         //Adding the newly created element to the specific area
         content.appendChild(newList);
-
-        totalArea.innerHTML = `<p>${totalNum+1}`;
+        //Incrementing the amount of playlists
+        totalArea.innerHTML = `<span>${totalNum+1}</span>`;
       }
     }
     else if (type == "search")
     {
+      
       //Retrieving the area to display the search results
       let resultsArea = document.querySelector("#resultsArea");
 
@@ -143,6 +159,8 @@ const handleResponse = (xhr, type) => {
       //console.log(incJSON);
       if(incJSON.total != 0)
       {
+        //Accompanies a 200 status code upon successful results
+        messageArea.innerHTML = "<b>Retrieved Results!</b>";
         //Seeting up a display for the search results
         resultsArea.innerHTML = "<b>Here are your results:</b>";
         
@@ -285,7 +303,38 @@ const handleResponse = (xhr, type) => {
       //If there are previously loaded playlists
       if(incJSON.totalPlaylists != 0)
       {
-        const content = document.querySelector('#displayArea');
+        //Message which would come witha 200 status code
+        messageArea.innerHTML = "<b>Loaded everyone's playlists!</b>";
+        
+        let content = document.querySelector('#displayArea');
+
+        //Getting the counter for the total number of playlists that have been created
+        let totalArea = document.querySelector("#num");
+
+        //Getting the value of it, and then parsing it to an int
+        let totalString = totalArea.innerText;
+        let totalNum = parseInt(totalString);
+
+        //This is a check to make it such that after 3 elements being made, it will create a new row to hold the data
+        if(totalNum % 3 == 0 && totalNum!=0)
+        {
+          //Changing the id of the results area so it is not added to again
+          content.id = "oldDisplayArea";
+
+          //Creating a new div and changing its values
+          let tempCont = document.createElement("div");
+          tempCont.id = "displayArea";
+          tempCont.className = "w3-cell-row"
+
+          //Used to insert the new content row after the old display area
+          //Utilizes the InsertAfter function from this link 
+          //https://plainjs.com/javascript/manipulation/insert-an-element-after-or-before-another-32/
+          content.parentNode.insertBefore(tempCont, content.nextSibling);
+
+          //Assigning the newly created div to be the one about to be modified
+          content = tempCont;
+        }
+
 
         //Looping through all of the playlists stored
         for (let index = 0; index < incJSON.totalPlaylists; index++) 
@@ -293,23 +342,33 @@ const handleResponse = (xhr, type) => {
           //Creating the div for the playlist
           let newList = document.createElement("div");
           newList.id = incJSON.list[index].name;
-          newList.className = incJSON.list[index].name;
+          newList.className = `${incJSON.list[index].name} w3-animate-opacity  w3-cell w3-padding`;
           
-          //Setting title and adding it to list
-          const title = document.createElement("h1");
-          title.innerHTML = `<h1>Playlist Name: ${incJSON.list[index].name}</h1>`;
-          newList.appendChild(title);
+         //Creating a header to hold the name of the playlist and attaching it to the Div
+          const head = document.createElement("header");
+          head.className = "w3-container w3-gray w3-border-black";
+          head.innerHTML = `<h1>Playlist name: ${incJSON.list[index].name}`;
+          //head.onclick = dropDown(incJSON.name);
+          //head.addEventListener("click", dropDown(incJSON.name));
+          newList.appendChild(head);
 
+          let listBlock = document.createElement("div");
+          listBlock.className = "w3-container w3-white";
+          listBlock.id = "list";
           //Looping through each playlist and making elements for all of their songs
           for (let j = 0; j < incJSON.list[index].length; j++) 
           {
             //Creating the element to be added to the list, and then adding it to the div for the playlist
             let info = document.createElement("p");
             info.innerHTML = `<p>${incJSON.list[index].songs[j].orderInList}. ${incJSON.list[index].songs[j].song} - ${incJSON.list[index].songs[j].artist}`;
-            info.className = incJSON.list[index].songs[j].orderInList;
-            newList.appendChild(info);
+            info.className = `${incJSON.list[index].songs[j].orderInList} w3-border-black`;
+            listBlock.appendChild(info);
           }  
+          newList.appendChild(listBlock);
           content.appendChild(newList);
+          
+          //Incrementing the amount of playlists
+          totalArea.innerHTML = `<span>${totalNum+1}</span>`;
         }
       }
     }

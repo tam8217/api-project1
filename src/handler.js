@@ -44,11 +44,11 @@ const respondJSON = (request, response, status, object) => {
   response.end();
 };
 
-/* const respondJSONMeta = (request, response, status, object) => {
+const respondJSONMeta = (request, response, status) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
   response.end();
 };
-*/
+
 
 const playlists = { totalPlaylists: 0, list: [] };
 
@@ -96,6 +96,8 @@ const addPlayList = (request, response, incomingData) => {
       // Set the index to be the current entry
       desiredIndex = i;
 
+      //This esentially is a 204 request, however, 204 requests are unable to send back data
+      //Therefore, it has to be sent back as a 201 or 200 status code
       // statusCode = 204;
     }
   }
@@ -114,7 +116,7 @@ const addPlayList = (request, response, incomingData) => {
   const songJSON = {
     song: incomingData.song,
     artist: incomingData.artist,
-    // +1 so that it is not zero ordered, but notmal order
+    // +1 so that it is not zero ordered, but normal order
     orderInList: currentSongNum + 1,
   };
 
@@ -166,7 +168,7 @@ const searchSong = (request, response, incomingData) => {
     // Catch errors
     if (res.error) throw new Error(res.error);
 
-    // Returning the JSON od fata from the song request
+    // Returning the JSON of data from the song request
     // Inside of the end function to make sure data comes back before sending back
     return respondJSON(request, response, 200, res.body);
   });
@@ -174,6 +176,17 @@ const searchSong = (request, response, incomingData) => {
   // Default response to end back, but should never be reached unless the API is down
   return false;
 };
+
+//Head request for a created playlist, 201
+const addPlaylistHead = (request, response) => {return respondJSONMeta(request, response, 201)};
+
+//404 call that returns the status code
+const notFoundHead = (request, response) =>{
+  return respondJSONMeta(request, response, 404);
+};
+
+//Returning a success for loading in playlists, if it was needed
+const loadPlaylistsHead = (request, response) => {return respondJSONMeta(request, response, 200)};
 
 // Simple function to send back all of the playlists which have been stored in this session
 const loadPlaylists = (request, response) => respondJSON(request, response, 200, playlists);
@@ -185,4 +198,7 @@ module.exports = {
   addPlayList,
   searchSong,
   loadPlaylists,
+  notFoundHead,
+  loadPlaylistsHead,
+  addPlaylistHead
 };

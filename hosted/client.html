@@ -13,17 +13,22 @@
 </head>
 <body>
   <section id="searchArea" class="w3-container">
-    <marquee behavior="scroll" direction="right" scrollamount="3">
-      <h1 class="rainbow-text">Graphic design is my passion</h1>
-    </marquee>
-    <form id="playlistInput" action="/searchSong" method="GET">
+    <header>
+      <h1>
+        Welcome to Playlists with Friends, the collaborative music site! 
+      </h1>
+      <h3>
+        Make your own playlists to share, or check out playlists other people made!
+      </h3>
+    </header>
+    <form id="playlistInput">
       <label for="playlist">Playlist Name: </label>
       <input id="playlistField" type="text" name="playlist" />
       <label for="artist">Artist Name: </label>
       <input id="artistField" type="text" name="artist" />
       <label for="song">Song Name: </label>
       <input id="songField" type="text" name="song" />
-      <input type="submit" value="Search For Song" />
+      <input type="submit" class="w3-button w3-gray w3-round-large"value="Search For Song" />
     </form> 
   
     <div id="messageDisplay">
@@ -33,8 +38,8 @@
 
     </div>
     <div id="totalArea">
-      <label for="num">Number of Playlists Made</label>
-      <p id="num" name="num">0</p>
+      <label for="num">Number of Playlists Made:</label>
+      <span id="num" name="num">0</span>
     </div>
   </section>
 
