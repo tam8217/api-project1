@@ -1,4 +1,8 @@
-
+//Manages responses from the handler
+//Has multiple different cases inside 
+//Add: A song was added to a playlists, or a new playlsit was made
+//Search: A song was searched, and the results will be displayed for the user to interact with
+//Load: The page has been refreshed/loaded, and if there are playlists already made, load them onto the page
 const handleResponse = (xhr, type) => {
 
   //Getting the place to display the message
@@ -384,6 +388,7 @@ const handleResponse = (xhr, type) => {
   }
 };
 
+//Adding songs to the playlist with a certain name, or making a new one if one does not exist
 const addToPlaylist = (e, song, artist, name) =>{
   //Actual user data inputted
   //If the playlist name includes spaces, set them to be Plus signs instead
@@ -418,6 +423,7 @@ const addToPlaylist = (e, song, artist, name) =>{
   return false;
 };
 
+//Search for a song using the parameters that the user has inputted
 const searchSongs = (e, playlistForm) =>{
   //Creating a loading message to let the user know their search is going through
   let messageArea = document.querySelector("#messageDisplay");
@@ -476,6 +482,8 @@ const loadSongs = ()=>{
   xhr.send();
   return false;
 };
+
+//Intialize the page
 const init = () => {
 
   //Making it so that clicking on the search button will actually search

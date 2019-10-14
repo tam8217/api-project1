@@ -5,7 +5,7 @@ const handler = require('./handler.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-
+//Retrieving data
 const handleGetReq = (request, response, parsedURL) => {
   // Directing to specific URLs
   if (parsedURL.pathname === '/style.css') {
@@ -15,7 +15,8 @@ const handleGetReq = (request, response, parsedURL) => {
   } else if (parsedURL.pathname === '/') {
     handler.getIndex(request, response);
   } else if (parsedURL.pathname === '/searchSong') {
-    handler.searchSong(request, response, query.parse(parsedURL.query));
+    //Sending parsed parameters to the request
+    handler.searchSong(request, response, query.parse(parsedURL.query)); 
   } else if (parsedURL.pathname === '/loadPlaylists') {
     handler.loadPlaylists(request, response);
   } else {
@@ -23,6 +24,7 @@ const handleGetReq = (request, response, parsedURL) => {
   }
 };
 
+//Meta data requests
 const handleHeadReq = (request, response, parsedURL) => {
   // Meta data from loading playlists in
   if (parsedURL.pathname === '/loadPlaylists') {
@@ -34,6 +36,7 @@ const handleHeadReq = (request, response, parsedURL) => {
   }
 };
 
+//Sending data to the handler to be stored
 const handlePostReq = (request, response, parsedURL) => {
   if (parsedURL.pathname === '/addPlaylist') {
     // Creating response to be manipulated
@@ -56,6 +59,7 @@ const handlePostReq = (request, response, parsedURL) => {
 
     // Once data is finished, send it out
     request.on('end', () => {
+      //Getting the user's parameters and getting them in a usable state
       const userString = Buffer.concat(userData).toString();
 
       const userParams = query.parse(userString);

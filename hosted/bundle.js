@@ -1,5 +1,10 @@
 "use strict";
 
+//Manages responses from the handler
+//Has multiple different cases inside 
+//Add: A song was added to a playlists, or a new playlsit was made
+//Search: A song was searched, and the results will be displayed for the user to interact with
+//Load: The page has been refreshed/loaded, and if there are playlists already made, load them onto the page
 var handleResponse = function handleResponse(xhr, type) {
 
   //Getting the place to display the message
@@ -360,6 +365,7 @@ var handleResponse = function handleResponse(xhr, type) {
     }
 };
 
+//Adding songs to the playlist with a certain name, or making a new one if one does not exist
 var addToPlaylist = function addToPlaylist(e, song, artist, name) {
   //Actual user data inputted
   //If the playlist name includes spaces, set them to be Plus signs instead
@@ -393,6 +399,7 @@ var addToPlaylist = function addToPlaylist(e, song, artist, name) {
   return false;
 };
 
+//Search for a song using the parameters that the user has inputted
 var searchSongs = function searchSongs(e, playlistForm) {
   //Creating a loading message to let the user know their search is going through
   var messageArea = document.querySelector("#messageDisplay");
@@ -455,6 +462,8 @@ var loadSongs = function loadSongs() {
   xhr.send();
   return false;
 };
+
+//Intialize the page
 var init = function init() {
 
   //Making it so that clicking on the search button will actually search
