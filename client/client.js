@@ -409,7 +409,7 @@ const addToPlaylist = (e, song, artist, name) =>{
 
   //Sending the parameters
   const formData = `playlistName=${name}&artist=${artist}&song=${song}`;
-  console.log(formData);
+ 
   
   xhr.send(formData);
 

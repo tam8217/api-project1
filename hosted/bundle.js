@@ -385,7 +385,6 @@ var addToPlaylist = function addToPlaylist(e, song, artist, name) {
 
   //Sending the parameters
   var formData = "playlistName=" + name + "&artist=" + artist + "&song=" + song;
-  console.log(formData);
 
   xhr.send(formData);
 
