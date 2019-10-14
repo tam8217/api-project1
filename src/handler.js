@@ -83,7 +83,7 @@ const addPlayList = (request, response, incomingData) => {
 
   // Creating an index to decide what playlist is being modified, defaulting to the end
   let desiredIndex = playlists.totalPlaylists;
-
+console.log(playName);
   // Looping through all current playlists to see if one with the searched one exists
   for (let i = 0; i < playlists.totalPlaylists; i++) {
     if (playlists.list[i].name === incomingData.playlistName) {
@@ -101,7 +101,7 @@ const addPlayList = (request, response, incomingData) => {
       // statusCode = 204;
     }
   }
-
+  console.log(playlists.list[desiredIndex]);
   // If there is not already a playlist with the name being searched for, make it
   if (exists === false) {
     // Creating basic data to be added for the playlsit
@@ -130,7 +130,7 @@ const addPlayList = (request, response, incomingData) => {
   playlists.list[desiredIndex].length = currentSongNum + 1;
 
   // Sending back the playlist data of the playlist which was being modified
-  return respondJSON(request, response, statusCode, playlists.list[playlists.totalPlaylists - 1]);
+  return respondJSON(request, response, statusCode, playlists.list[desiredIndex]);
 };
 
 const searchSong = (request, response, incomingData) => {

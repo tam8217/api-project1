@@ -47,6 +47,8 @@ const handleResponse = (xhr, type) => {
       //Getting elements on the page that have the class name corresponding to the name of the playlist that came back
       let list = document.getElementsByClassName(`${incJSON.name}`);
 
+      console.log(list);
+      console.log(incJSON);
       //If there is a playlist that matches the class, add the object to the playlist instead of remaking the playlist
       if(list.length == 1)
       {
@@ -228,7 +230,7 @@ const handleResponse = (xhr, type) => {
                 //Checking the name to make sure it is not just blank
                 let name = playlistName.value;
                 name = name.trim();
-
+                console.log(name);
                 //If the playlist name is not blank, send a request to add it
                 if(name != "")
                 {
@@ -421,6 +423,8 @@ const addToPlaylist = (e, song, artist, name) =>{
   {
     name = name.replace(" ", "+");
   }
+
+  
   //Create request
   const xhr = new XMLHttpRequest();
 
@@ -436,7 +440,7 @@ const addToPlaylist = (e, song, artist, name) =>{
 
   //Sending the parameters
   const formData = `playlistName=${name}&artist=${artist}&song=${song}`;
-
+  console.log(formData);
   
   xhr.send(formData);
 
