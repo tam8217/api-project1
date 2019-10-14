@@ -7,10 +7,12 @@ var handleResponse = function handleResponse(xhr, type) {
 
   //Used to check if a bad response comes through
   var dontParse = false;
+
   //Notifying the user the status of their request
   //Handles bad requests, as successful requests are handled inside their respective checks
   switch (xhr.status) {
     //Passing through positive status requests so it does not default
+    //They are handled individually in the separate calls
     case 200:
     case 201:
     case 204:
@@ -39,20 +41,19 @@ var handleResponse = function handleResponse(xhr, type) {
     if (type == "add") {
       //Grabbing the area where the playlists will be displayed
       var content = document.querySelector('#displayArea');
+
       //Parse the JSON and write it out
       var incJSON = JSON.parse(xhr.response);
 
       //Getting elements on the page that have the class name corresponding to the name of the playlist that came back
       var list = document.getElementsByClassName("" + incJSON.name);
 
-      console.log(list);
-      console.log(incJSON);
       //If there is a playlist that matches the class, add the object to the playlist instead of remaking the playlist
       if (list.length == 1) {
         //Would be the message that shows up whena 204 status code comes through
         //However, since to update something, data is necessary, it comes in with a 201 status code instead
         messageArea.innerHTML = "<b>Playlist Updated!</b>";
-        //ERROR: Check the length and see if there is already an element with that tag
+
         //Getting the list we are looking at
         var currentList = list[0];
 
@@ -79,6 +80,7 @@ var handleResponse = function handleResponse(xhr, type) {
       else {
           //Message which accompanies a 201 status code
           messageArea.innerHTML = "<b>Playlist Created!</b>";
+
           //Getting the counter for the total number of playlists that have been created
           var totalArea = document.querySelector("#num");
 
@@ -87,6 +89,7 @@ var handleResponse = function handleResponse(xhr, type) {
           var totalNum = parseInt(totalString);
 
           //This is a check to make it such that after 3 elements being made, it will create a new row to hold the data
+          //Also makes sure it is not the first element, so that it does not try to make a new row instantly
           if (totalNum % 3 == 0 && totalNum != 0) {
             //Changing the id of the results area so it is not added to again
             content.id = "oldDisplayArea";
@@ -104,7 +107,6 @@ var handleResponse = function handleResponse(xhr, type) {
             //Assigning the newly created div to be the one about to be modified
             content = tempCont;
           }
-          //console.log(incJSON);
           //Create a div to hold the playlist 
           var newList = document.createElement("div");
 
@@ -112,15 +114,13 @@ var handleResponse = function handleResponse(xhr, type) {
 
           //Giving the div the name of the playlist as a class so it can be accessed later
           //Also making it fade in upoon creation, and display in a row with other playlists
-          //newList.className = `${incJSON.name} w3-animate-opacity w3-col w3-container`;
           newList.className = incJSON.name + " w3-animate-opacity  w3-cell w3-padding";
 
           //Creating a header to hold the name of the playlist and attaching it to the Div
           var head = document.createElement("header");
           head.className = "w3-container w3-gray w3-border-black";
           head.innerHTML = "<h1>Playlist name: " + incJSON.name;
-          //head.onclick = dropDown(incJSON.name);
-          //head.addEventListener("click", dropDown(incJSON.name));
+
           newList.appendChild(head);
 
           //Creating a div to hold the songs, allows it to have w3 CSS applied to it
@@ -144,128 +144,91 @@ var handleResponse = function handleResponse(xhr, type) {
           //Incrementing the amount of playlists
           totalArea.innerHTML = "<span>" + (totalNum + 1) + "</span>";
         }
-    } else if (type == "search") {
+    }
+    //If the user has searched for a song, go through the process of formatting the results
+    else if (type == "search") {
 
-      //Retrieving the area to display the search results
-      var resultsArea = document.querySelector("#resultsArea");
+        //Retrieving the area to display the search results
+        var resultsArea = document.querySelector("#resultsArea");
 
-      var _incJSON = JSON.parse(xhr.response);
-      //console.log(incJSON);
-      if (_incJSON.total != 0) {
-        //Accompanies a 200 status code upon successful results
-        messageArea.innerHTML = "<b>Retrieved Results!</b>";
-        //Seeting up a display for the search results
-        resultsArea.innerHTML = "<b>Here are your results:</b>";
+        var _incJSON = JSON.parse(xhr.response);
 
-        //Creating a table
-        var resultsTable = document.createElement('table');
-        //Styling it using w3 School's framework
-        resultsTable.className = "w3-table-all";
+        if (_incJSON.total != 0) {
+          //Accompanies a 200 status code upon successful results
+          messageArea.innerHTML = "<b>Retrieved Results!</b>";
+          //Seeting up a display for the search results
+          resultsArea.innerHTML = "<b>Here are your results:</b>";
 
-        //Giving it an easy id so it can be retrieved later
-        resultsTable.id = "results";
+          //Creating a table
+          var resultsTable = document.createElement('table');
+          //Styling it using w3 School's framework
+          resultsTable.className = "w3-table-all";
 
-        //Adding it to the results area
-        resultsArea.append(resultsTable);
+          //Giving it an easy id so it can be retrieved later
+          resultsTable.id = "results";
 
-        //Creating the top row of cells which will give the columns their names
-        var headRow = resultsTable.insertRow();
-        var songHead = headRow.insertCell();
-        var artistHead = headRow.insertCell();
-        var blankHead = headRow.insertCell();
+          //Adding it to the results area
+          resultsArea.append(resultsTable);
 
-        //Code for adding rows and cells comes from https://www.geeksforgeeks.org/html-dom-table-insertrow-method/#targetText=The%20Table%20insertRow()%20method,%3E%20or%20elements.&targetText=index%20%3AIt%20is%20used%20to,the%20row%20to%20be%20inserted.
-        songHead.innerHTML = "<b>Song</b>";
-        songHead.addEventListener('click', function () {
-          console.log("s");
-        });
-        artistHead.innerHTML = "<b>Artist</b>";
-        blankHead.innerHTML = "";
+          //Creating the top row of cells which will give the columns their names
+          var headRow = resultsTable.insertRow();
+          var songHead = headRow.insertCell();
+          var artistHead = headRow.insertCell();
+          var blankHead = headRow.insertCell();
 
-        //Defaulting the number of songs shown to 5, will be changed if there is less
-        var displayedSongs = 5;
+          //Code for adding rows and cells comes from https://www.geeksforgeeks.org/html-dom-table-insertrow-method/#targetText=The%20Table%20insertRow()%20method,%3E%20or%20elements.&targetText=index%20%3AIt%20is%20used%20to,the%20row%20to%20be%20inserted.
+          songHead.innerHTML = "<b>Song</b>";
+          artistHead.innerHTML = "<b>Artist</b>";
+          blankHead.innerHTML = ""; //Blank, becuase this column does not need a header, it is the column for the add to playlist buttons
 
-        //Only displaying a certain number of results
-        if (_incJSON.total <= 5) {
-          for (var index = 0; index < _incJSON.total; index++) {
+          //Defaulting the number of songs shown to 5, will be changed if there is less
+          var displayedSongs = 5;
 
-            //Creating the new row to hold the cells
-            var newRow = resultsTable.insertRow();
+          //Only displaying a certain number of results
+          if (_incJSON.total <= 5) {
+            //Looping through the amount of results that are available
+            for (var index = 0; index < _incJSON.total; index++) {
 
-            //Creating cells for each piece of data
-            var songCol = newRow.insertCell();
-            var artistCol = newRow.insertCell();
-            var buttonCol = newRow.insertCell();
+              //Creating the new row to hold the cells
+              var newRow = resultsTable.insertRow();
 
-            //Setting the info from the request
-            songCol.innerHTML = "" + _incJSON.data[index].title_short;
-            artistCol.innerHTML = "" + _incJSON.data[index].artist.name;
+              //Creating cells for each piece of data
+              var songCol = newRow.insertCell();
+              var artistCol = newRow.insertCell();
+              var buttonCol = newRow.insertCell();
 
-            //Creating a button which can be used to add it to the playlist
-            buttonCol.innerHTML = "<input type=\"button\" class=\"w3-button w3-round-large w3-right-align\" value=\"Add to Playlist\" id=\"" + index + "\">";
-          }
+              //Setting the info from the request
+              songCol.innerHTML = "" + _incJSON.data[index].title_short;
+              artistCol.innerHTML = "" + _incJSON.data[index].artist.name;
 
-          //Saving the number of songs displayed
-          displayedSongs = _incJSON.total;
-
-          //Adding an event listener to the whole results area, and checking what is clicked
-          //Based on the idea of the code from here https://stackoverflow.com/a/34896387
-          resultsArea.addEventListener('click', function (e) {
-
-            //Checking which button is being clicked, if any
-            for (var _index = 0; _index < _incJSON.total; _index++) {
-              if (e.target.id == _index) {
-                //Getting the name of the playlist the user entered
-                var playlistName = document.querySelector("#playlistInput").querySelector('#playlistField');
-
-                //Checking the name to make sure it is not just blank
-                var name = playlistName.value;
-                name = name.trim();
-                console.log(name);
-                //If the playlist name is not blank, send a request to add it
-                if (name != "") {
-                  addToPlaylist(e, _incJSON.data[_index].title_short, _incJSON.data[_index].artist.name, name);
-                  break;
-                }
-
-                //Error check to make sure the user does not send a faulty request without having a playlist name
-                else {
-                    messageArea.innerHTML = "<b>Please input a playlist name!</b>";
-                  }
-              }
-            }
-          });
-        }
-        //Setting a cap of 5 results if there are more than 5 songs in the returned JSON
-        else {
-            for (var _index2 = 0; _index2 < 5; _index2++) {
-              var _newRow = resultsTable.insertRow();
-              var _songCol = _newRow.insertCell();
-              var _artistCol = _newRow.insertCell();
-              var _buttonCol = _newRow.insertCell();
-
-              _songCol.innerHTML = "" + _incJSON.data[_index2].title_short;
-              _artistCol.innerHTML = "" + _incJSON.data[_index2].artist.name;
-              _buttonCol.innerHTML = "<input type=\"button\" class=\"w3-button w3-round-large w3-right-align\" value=\"Add to Playlist\" id=\"" + _index2 + "\">";
+              //Creating a button which can be used to add it to the playlist
+              buttonCol.innerHTML = "<input type=\"button\" class=\"w3-button w3-round-large w3-right-align\" value=\"Add to Playlist\" id=\"" + index + "\">";
             }
 
+            //Saving the number of songs displayed
+            displayedSongs = _incJSON.total;
+
+            //Adding an event listener to the whole results area, and checking what is clicked
+            //Based on the idea of the code from here https://stackoverflow.com/a/34896387
             resultsArea.addEventListener('click', function (e) {
-              for (var _index3 = 0; _index3 < 5; _index3++) {
-                if (e.target.id == _index3) {
-                  //Getting the name of the playlist from what the user inputted
+
+              //Checking which button is being clicked, if any
+              for (var _index = 0; _index < _incJSON.total; _index++) {
+                if (e.target.id == _index) {
+                  //Getting the name of the playlist the user entered
                   var playlistName = document.querySelector("#playlistInput").querySelector('#playlistField');
 
-                  //Reassign it so it can be modified
+                  //Checking the name to make sure it is not just blank
                   var name = playlistName.value;
-
-                  //Remove white space to make sure it is not just spaces
                   name = name.trim();
 
-                  //Only adding the song to the playlist as long as there is a playlist name
+                  //If the playlist name is not blank, send a request to add it
                   if (name != "") {
-                    addToPlaylist(e, _incJSON.data[_index3].title_short, _incJSON.data[_index3].artist.name, name);
+                    addToPlaylist(e, _incJSON.data[_index].title_short, _incJSON.data[_index].artist.name, name);
+                    break;
                   }
-                  //Error check to notify the user that they need a playlist name before adding
+
+                  //Error check to make sure the user does not send a faulty request without having a playlist name
                   else {
                       messageArea.innerHTML = "<b>Please input a playlist name!</b>";
                     }
@@ -273,83 +236,122 @@ var handleResponse = function handleResponse(xhr, type) {
               }
             });
           }
+          //Setting a cap of 5 results if there are more than 5 songs in the returned JSON
+          else {
+              for (var _index2 = 0; _index2 < 5; _index2++) {
+                var _newRow = resultsTable.insertRow();
+                var _songCol = _newRow.insertCell();
+                var _artistCol = _newRow.insertCell();
+                var _buttonCol = _newRow.insertCell();
 
-        //Displaying the number of results
-        resultsArea.innerHTML += "<p>Displaying " + displayedSongs + " out of " + _incJSON.total;
-      } else {
-        //Resetting the area to have a message displayed instead of a table
-        resultsArea.innerHTML = "<b>No songs found! Try refining your search.</b>";
-      }
-    } else if (type == "load") {
-      var _incJSON2 = JSON.parse(xhr.response);
+                _songCol.innerHTML = "" + _incJSON.data[_index2].title_short;
+                _artistCol.innerHTML = "" + _incJSON.data[_index2].artist.name;
+                _buttonCol.innerHTML = "<input type=\"button\" class=\"w3-button w3-round-large w3-right-align\" value=\"Add to Playlist\" id=\"" + _index2 + "\">";
+              }
 
-      //If there are previously loaded playlists
-      if (_incJSON2.totalPlaylists != 0) {
-        //Message which would come witha 200 status code
-        messageArea.innerHTML = "<b>Loaded everyone's playlists!</b>";
+              //Adding an event listener to the results area to be used to select songs to be added to the playlist
+              resultsArea.addEventListener('click', function (e) {
+                for (var _index3 = 0; _index3 < 5; _index3++) {
+                  if (e.target.id == _index3) {
+                    //Getting the name of the playlist from what the user inputted
+                    var playlistName = document.querySelector("#playlistInput").querySelector('#playlistField');
 
-        var _content = document.querySelector('#displayArea');
+                    //Reassign it so it can be modified
+                    var name = playlistName.value;
 
-        //Looping through all of the playlists stored
-        for (var _index4 = 0; _index4 < _incJSON2.totalPlaylists; _index4++) {
+                    //Remove white space to make sure it is not just spaces
+                    name = name.trim();
 
-          //Getting the counter for the total number of playlists that have been created
-          var _totalArea = document.querySelector("#num");
-
-          //Getting the value of it, and then parsing it to an int
-          var _totalString = _totalArea.innerText;
-          var _totalNum = parseInt(_totalString);
-          console.log(_totalNum);
-          //This is a check to make it such that after 3 elements being made, it will create a new row to hold the data
-          if (_totalNum % 3 == 0 && _totalNum != 0) {
-            //Changing the id of the results area so it is not added to again
-            _content.id = "oldDisplayArea";
-
-            //Creating a new div and changing its values
-            var _tempCont = document.createElement("div");
-            _tempCont.id = "displayArea";
-            _tempCont.className = "w3-cell-row";
-
-            //Used to insert the new content row after the old display area
-            //Utilizes the InsertAfter function from this link 
-            //https://plainjs.com/javascript/manipulation/insert-an-element-after-or-before-another-32/
-            _content.parentNode.insertBefore(_tempCont, _content.nextSibling);
-
-            //Assigning the newly created div to be the one about to be modified
-            _content = _tempCont;
-          }
-          //Creating the div for the playlist
-          var _newList = document.createElement("div");
-          _newList.id = _incJSON2.list[_index4].name;
-          _newList.className = _incJSON2.list[_index4].name + " w3-animate-opacity  w3-cell w3-padding";
-
-          //Creating a header to hold the name of the playlist and attaching it to the Div
-          var _head = document.createElement("header");
-          _head.className = "w3-container w3-gray w3-border-black";
-          _head.innerHTML = "<h1>Playlist name: " + _incJSON2.list[_index4].name;
-          //head.onclick = dropDown(incJSON.name);
-          //head.addEventListener("click", dropDown(incJSON.name));
-          _newList.appendChild(_head);
-
-          var _listBlock = document.createElement("div");
-          _listBlock.className = "w3-container w3-white";
-          _listBlock.id = "list";
-          //Looping through each playlist and making elements for all of their songs
-          for (var j = 0; j < _incJSON2.list[_index4].length; j++) {
-            //Creating the element to be added to the list, and then adding it to the div for the playlist
-            var _info2 = document.createElement("p");
-            _info2.innerHTML = "<p>" + _incJSON2.list[_index4].songs[j].orderInList + ". " + _incJSON2.list[_index4].songs[j].song + " - " + _incJSON2.list[_index4].songs[j].artist;
-            _info2.className = _incJSON2.list[_index4].songs[j].orderInList + " w3-border-black";
-            _listBlock.appendChild(_info2);
-          }
-          _newList.appendChild(_listBlock);
-          _content.appendChild(_newList);
-
-          //Incrementing the amount of playlists
-          _totalArea.innerHTML = "<span>" + (_totalNum + 1) + "</span>";
+                    //Only adding the song to the playlist as long as there is a playlist name
+                    if (name != "") {
+                      addToPlaylist(e, _incJSON.data[_index3].title_short, _incJSON.data[_index3].artist.name, name);
+                    }
+                    //Error check to notify the user that they need a playlist name before adding
+                    else {
+                        messageArea.innerHTML = "<b>Please input a playlist name!</b>";
+                      }
+                  }
+                }
+              });
+            }
+          //Displaying the number of results
+          resultsArea.innerHTML += "<p>Displaying " + displayedSongs + " out of " + _incJSON.total;
+        } else {
+          //Resetting the area to have a message displayed instead of a table
+          resultsArea.innerHTML = "<b>No songs found! Try refining your search.</b>";
         }
       }
-    }
+      //If the page is loading for the first time/reloading
+      //Will be used to populate the screen with playlists if there are some that have already been made
+      else if (type == "load") {
+          var _incJSON2 = JSON.parse(xhr.response);
+
+          //If there are previously loaded playlists
+          if (_incJSON2.totalPlaylists != 0) {
+            //Message which would come witha 200 status code
+            messageArea.innerHTML = "<b>Loaded everyone's playlists!</b>";
+
+            var _content = document.querySelector('#displayArea');
+
+            //Looping through all of the playlists stored
+            for (var _index4 = 0; _index4 < _incJSON2.totalPlaylists; _index4++) {
+
+              //Getting the counter for the total number of playlists that have been created
+              var _totalArea = document.querySelector("#num");
+
+              //Getting the value of it, and then parsing it to an int
+              var _totalString = _totalArea.innerText;
+              var _totalNum = parseInt(_totalString);
+
+              //This is a check to make it such that after 3 elements being made, it will create a new row to hold the data
+              if (_totalNum % 3 == 0 && _totalNum != 0) {
+                //Changing the id of the results area so it is not added to again
+                _content.id = "oldDisplayArea";
+
+                //Creating a new div and changing its values
+                var _tempCont = document.createElement("div");
+                _tempCont.id = "displayArea";
+                _tempCont.className = "w3-cell-row";
+
+                //Used to insert the new content row after the old display area
+                //Utilizes the InsertAfter function from this link 
+                //https://plainjs.com/javascript/manipulation/insert-an-element-after-or-before-another-32/
+                _content.parentNode.insertBefore(_tempCont, _content.nextSibling);
+
+                //Assigning the newly created div to be the one about to be modified
+                _content = _tempCont;
+              }
+              //Creating the div for the playlist
+              var _newList = document.createElement("div");
+              _newList.id = _incJSON2.list[_index4].name;
+              _newList.className = _incJSON2.list[_index4].name + " w3-animate-opacity  w3-cell w3-padding";
+
+              //Creating a header to hold the name of the playlist and attaching it to the Div
+              var _head = document.createElement("header");
+              _head.className = "w3-container w3-gray w3-border-black";
+              _head.innerHTML = "<h1>Playlist name: " + _incJSON2.list[_index4].name;
+              _newList.appendChild(_head);
+
+              //Creating div to hold the songs
+              var _listBlock = document.createElement("div");
+              _listBlock.className = "w3-container w3-white";
+              _listBlock.id = "list";
+              //Looping through each playlist and making elements for all of their songs
+              for (var j = 0; j < _incJSON2.list[_index4].length; j++) {
+                //Creating the element to be added to the list, and then adding it to the div for the playlist
+                var _info2 = document.createElement("p");
+                _info2.innerHTML = "<p>" + _incJSON2.list[_index4].songs[j].orderInList + ". " + _incJSON2.list[_index4].songs[j].song + " - " + _incJSON2.list[_index4].songs[j].artist;
+                _info2.className = _incJSON2.list[_index4].songs[j].orderInList + " w3-border-black";
+                _listBlock.appendChild(_info2);
+              }
+              _newList.appendChild(_listBlock);
+              _content.appendChild(_newList);
+
+              //Incrementing the amount of playlists
+              _totalArea.innerHTML = "<span>" + (_totalNum + 1) + "</span>";
+            }
+          }
+        }
   }
   //Resetting the results area if there is a bad search
   else {
@@ -358,37 +360,6 @@ var handleResponse = function handleResponse(xhr, type) {
     }
 };
 
-/*const dropDown = (currentID) =>{
-  let list = document.querySelector(`#${currentID}`).querySelector("#list");
-  if(list.className.contains("w3-show"))
-  {
-    list.className = list.className.replace(" w3-show","");
-  }
-  else{
-    list.className+= " w3-show";
-  }
-};
-*/
-/*
-function dropDown(currentID)
-{
-  //let list = document.querySelector(`#${currentID}`).querySelector("#list");
-  let block = document.querySelector(`#${currentID}`);
-  console.log("here");
-  if(block != null)
-  {
-    console.log("there");
-    let list = block.querySelector("#list");
-    if(list.className.contains("w3-show"))
-    {
-      list.className = list.className.replace(" w3-show","");
-    }
-    else{
-      list.className+= " w3-show";
-    }
-  }
-}
-*/
 var addToPlaylist = function addToPlaylist(e, song, artist, name) {
   //Actual user data inputted
   //If the playlist name includes spaces, set them to be Plus signs instead

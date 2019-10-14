@@ -20,14 +20,9 @@ const getCSS = (request, response) => {
   response.write(css);
   response.end();
 };
-const notFound = (request, response) => {
-  /* const responseJSON = {
-    message: 'The page you are looking for was not found.',
-    id: 'notFound',
-  };
 
-  respondJSON(request, response, 404, responseJSON);
-  */
+//Sending to the 404 page
+const notFound = (request, response) => {
   response.writeHead(404, { 'Content-Type': 'text/html' });
   response.write(nf);
   response.end();
@@ -38,6 +33,8 @@ const getBundle = (request, response) => {
   response.write(jsBundle);
   response.end();
 };
+
+//Functions which will handle the sending out of data
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(object));
@@ -49,7 +46,7 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
-
+//Container for all the plaulists to be added
 const playlists = { totalPlaylists: 0, list: [] };
 
 
@@ -61,7 +58,6 @@ const addPlayList = (request, response, incomingData) => {
   // Checking parameters of the incoming incomingData
   if (!incomingData.artist || !incomingData.song || !incomingData.playlistName) {
     tempObj.id = 'missingParams';
-    console.log('Error1');
     return respondJSON(request, response, 400, tempObj);
   }
 
@@ -83,7 +79,7 @@ const addPlayList = (request, response, incomingData) => {
 
   // Creating an index to decide what playlist is being modified, defaulting to the end
   let desiredIndex = playlists.totalPlaylists;
-console.log(playName);
+  
   // Looping through all current playlists to see if one with the searched one exists
   for (let i = 0; i < playlists.totalPlaylists; i++) {
     if (playlists.list[i].name === incomingData.playlistName) {
@@ -101,7 +97,6 @@ console.log(playName);
       // statusCode = 204;
     }
   }
-  console.log(playlists.list[desiredIndex]);
   // If there is not already a playlist with the name being searched for, make it
   if (exists === false) {
     // Creating basic data to be added for the playlsit

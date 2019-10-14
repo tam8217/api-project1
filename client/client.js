@@ -6,11 +6,13 @@ const handleResponse = (xhr, type) => {
 
   //Used to check if a bad response comes through
   let dontParse = false;
+
   //Notifying the user the status of their request
   //Handles bad requests, as successful requests are handled inside their respective checks
   switch(xhr.status)
   {
     //Passing through positive status requests so it does not default
+    //They are handled individually in the separate calls
     case 200:
     case 201:
     case 204:
@@ -41,21 +43,20 @@ const handleResponse = (xhr, type) => {
     {
       //Grabbing the area where the playlists will be displayed
       let content = document.querySelector('#displayArea');
+
       //Parse the JSON and write it out
       const incJSON = JSON.parse(xhr.response);
 
       //Getting elements on the page that have the class name corresponding to the name of the playlist that came back
       let list = document.getElementsByClassName(`${incJSON.name}`);
 
-      console.log(list);
-      console.log(incJSON);
       //If there is a playlist that matches the class, add the object to the playlist instead of remaking the playlist
       if(list.length == 1)
       {
         //Would be the message that shows up whena 204 status code comes through
         //However, since to update something, data is necessary, it comes in with a 201 status code instead
         messageArea.innerHTML = "<b>Playlist Updated!</b>";
-        //ERROR: Check the length and see if there is already an element with that tag
+        
         //Getting the list we are looking at
         let currentList = list[0];
 
@@ -83,6 +84,7 @@ const handleResponse = (xhr, type) => {
       {
         //Message which accompanies a 201 status code
         messageArea.innerHTML = "<b>Playlist Created!</b>";
+
         //Getting the counter for the total number of playlists that have been created
         let totalArea = document.querySelector("#num");
 
@@ -91,6 +93,7 @@ const handleResponse = (xhr, type) => {
         let totalNum = parseInt(totalString);
 
         //This is a check to make it such that after 3 elements being made, it will create a new row to hold the data
+        //Also makes sure it is not the first element, so that it does not try to make a new row instantly
         if(totalNum % 3 == 0 && totalNum!=0)
         {
           //Changing the id of the results area so it is not added to again
@@ -109,7 +112,6 @@ const handleResponse = (xhr, type) => {
           //Assigning the newly created div to be the one about to be modified
           content = tempCont;
         }
-        //console.log(incJSON);
         //Create a div to hold the playlist 
         let newList = document.createElement("div");
 
@@ -117,15 +119,13 @@ const handleResponse = (xhr, type) => {
 
         //Giving the div the name of the playlist as a class so it can be accessed later
         //Also making it fade in upoon creation, and display in a row with other playlists
-        //newList.className = `${incJSON.name} w3-animate-opacity w3-col w3-container`;
         newList.className = `${incJSON.name} w3-animate-opacity  w3-cell w3-padding`;
 
         //Creating a header to hold the name of the playlist and attaching it to the Div
         const head = document.createElement("header");
         head.className = "w3-container w3-gray w3-border-black";
         head.innerHTML = `<h1>Playlist name: ${incJSON.name}`;
-        //head.onclick = dropDown(incJSON.name);
-        //head.addEventListener("click", dropDown(incJSON.name));
+
         newList.appendChild(head);
 
         //Creating a div to hold the songs, allows it to have w3 CSS applied to it
@@ -151,6 +151,7 @@ const handleResponse = (xhr, type) => {
         totalArea.innerHTML = `<span>${totalNum+1}</span>`;
       }
     }
+    //If the user has searched for a song, go through the process of formatting the results
     else if (type == "search")
     {
       
@@ -158,7 +159,7 @@ const handleResponse = (xhr, type) => {
       let resultsArea = document.querySelector("#resultsArea");
 
       const incJSON = JSON.parse(xhr.response);
-      //console.log(incJSON);
+
       if(incJSON.total != 0)
       {
         //Accompanies a 200 status code upon successful results
@@ -185,9 +186,8 @@ const handleResponse = (xhr, type) => {
         
         //Code for adding rows and cells comes from https://www.geeksforgeeks.org/html-dom-table-insertrow-method/#targetText=The%20Table%20insertRow()%20method,%3E%20or%20elements.&targetText=index%20%3AIt%20is%20used%20to,the%20row%20to%20be%20inserted.
         songHead.innerHTML = "<b>Song</b>";
-        songHead.addEventListener('click',function(){console.log("s")});
         artistHead.innerHTML = "<b>Artist</b>";
-        blankHead.innerHTML = "";
+        blankHead.innerHTML = ""; //Blank, becuase this column does not need a header, it is the column for the add to playlist buttons
 
         //Defaulting the number of songs shown to 5, will be changed if there is less
         let displayedSongs = 5;
@@ -195,6 +195,7 @@ const handleResponse = (xhr, type) => {
         //Only displaying a certain number of results
         if(incJSON.total <= 5)
         {
+          //Looping through the amount of results that are available
           for (let index = 0; index < incJSON.total; index++) {
 
             //Creating the new row to hold the cells
@@ -230,7 +231,7 @@ const handleResponse = (xhr, type) => {
                 //Checking the name to make sure it is not just blank
                 let name = playlistName.value;
                 name = name.trim();
-                console.log(name);
+                
                 //If the playlist name is not blank, send a request to add it
                 if(name != "")
                 {
@@ -261,6 +262,7 @@ const handleResponse = (xhr, type) => {
             buttonCol.innerHTML = `<input type="button" class="w3-button w3-round-large w3-right-align" value="Add to Playlist" id="${index}">`;
           }
 
+          //Adding an event listener to the results area to be used to select songs to be added to the playlist
           resultsArea.addEventListener('click', function(e){
             for (let index = 0; index < 5; index++) {
               if(e.target.id == index)
@@ -288,7 +290,6 @@ const handleResponse = (xhr, type) => {
             }
           });
         }
-
         //Displaying the number of results
         resultsArea.innerHTML += `<p>Displaying ${displayedSongs} out of ${incJSON.total}`;
       }
@@ -298,6 +299,8 @@ const handleResponse = (xhr, type) => {
         resultsArea.innerHTML = "<b>No songs found! Try refining your search.</b>";
       }
     }
+    //If the page is loading for the first time/reloading
+    //Will be used to populate the screen with playlists if there are some that have already been made
     else if(type == "load")
     {
       const incJSON = JSON.parse(xhr.response);
@@ -310,8 +313,6 @@ const handleResponse = (xhr, type) => {
         
         let content = document.querySelector('#displayArea');
 
-
-
         //Looping through all of the playlists stored
         for (let index = 0; index < incJSON.totalPlaylists; index++) 
         {
@@ -322,7 +323,7 @@ const handleResponse = (xhr, type) => {
           //Getting the value of it, and then parsing it to an int
           let totalString = totalArea.innerText;
           let totalNum = parseInt(totalString);
-          console.log(totalNum);
+          
           //This is a check to make it such that after 3 elements being made, it will create a new row to hold the data
           if(totalNum % 3 == 0 && totalNum!=0)
           {
@@ -351,10 +352,9 @@ const handleResponse = (xhr, type) => {
           const head = document.createElement("header");
           head.className = "w3-container w3-gray w3-border-black";
           head.innerHTML = `<h1>Playlist name: ${incJSON.list[index].name}`;
-          //head.onclick = dropDown(incJSON.name);
-          //head.addEventListener("click", dropDown(incJSON.name));
           newList.appendChild(head);
 
+          //Creating div to hold the songs
           let listBlock = document.createElement("div");
           listBlock.className = "w3-container w3-white";
           listBlock.id = "list";
@@ -384,37 +384,6 @@ const handleResponse = (xhr, type) => {
   }
 };
 
-/*const dropDown = (currentID) =>{
-  let list = document.querySelector(`#${currentID}`).querySelector("#list");
-  if(list.className.contains("w3-show"))
-  {
-    list.className = list.className.replace(" w3-show","");
-  }
-  else{
-    list.className+= " w3-show";
-  }
-};
-*/
-/*
-function dropDown(currentID)
-{
-  //let list = document.querySelector(`#${currentID}`).querySelector("#list");
-  let block = document.querySelector(`#${currentID}`);
-  console.log("here");
-  if(block != null)
-  {
-    console.log("there");
-    let list = block.querySelector("#list");
-    if(list.className.contains("w3-show"))
-    {
-      list.className = list.className.replace(" w3-show","");
-    }
-    else{
-      list.className+= " w3-show";
-    }
-  }
-}
-*/
 const addToPlaylist = (e, song, artist, name) =>{
   //Actual user data inputted
   //If the playlist name includes spaces, set them to be Plus signs instead
